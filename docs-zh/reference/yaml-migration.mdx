@@ -1,0 +1,358 @@
+---
+title: "将配置迁移到 YAML"
+description: "Continue 的 YAML 配置格式提供了更易读、可维护、一致的配置文件，以及新的配置选项和移除了一些旧的配置选项。YAML 是首选格式，将用于与未来的 Continue 产品集成。以下是从 config.json 迁移到 config.yaml 的简要指南。"
+---
+
+另请参阅
+
+- [YAML 简介](https://yaml.org/)
+- [YAML Continue 配置参考](/reference)
+
+## 创建 YAML 文件
+
+在您的 Continue 全局目录（Mac 上为 `~/.continue`，Windows 上为 `%USERPROFILE%\.continue`）中创建一个 `config.yaml` 文件，与您当前的 config.json 文件放在一起。如果存在 `config.yaml` 文件，它将被加载而不是 config.json。
+
+为您的配置指定一个 `name` 和一个 `version`：
+
+config.yaml
+
+```
+name: my-configurationversion: 0.0.1schema: v1
+```
+
+### 模型
+
+将 `config.json` 中的所有模型配置，包括 `models`、`tabAutocompleteModel`、`embeddingsProvider` 和 `reranker` 中的模型，添加到新 YAML 配置文件的 `models` 部分。一个新的 `roles` YAML 字段指定模型可以用于哪些角色，可能的值为 `chat`、`autocomplete`、`embed`、`rerank`、`edit`、`apply`、`summarize`。
+
+- config 中的 `models` 应具有 `roles: [chat]`
+
+- config 中的 `tabAutocompleteModel`(s) 应具有 `roles: [autocomplete]`
+
+- config 中的 `embeddingsProvider` 应具有 `roles: [embed]`
+
+- config 中的 `reranker` 应具有 `roles: [rerank]`
+
+- `experimental.modelRoles` 被替换为简单地向模型添加角色
+  - `inlineEdit` -> 例如 `roles: [chat, edit]`
+  - `applyCodeBlock` -> 例如 `roles: [chat, apply]`
+
+模型级别的 `requestOptions` 仍然存在，有一些小的变化。请参阅 [YAML Continue 配置参考](/reference#models)
+
+模型级别的 `completionOptions` 被 `defaultCompletionOptions` 替换，有一些小的变化。请参阅 [YAML Continue 配置参考](/reference#models)
+
+**迁移前**
+
+config.json
+
+```json
+{
+  "models": [
+    {
+      "title": "GPT-4",
+      "provider": "openai",
+      "model": "gpt-4",
+      "apiKey": "<YOUR_OPENAI_API_KEY>",
+      "completionOptions": { "temperature": 0.5, "maxTokens": 2000 }
+    },
+    { "title": "Ollama", "provider": "ollama", "model": "AUTODETECT" },
+    {
+      "title": "My Open AI Compatible Model",
+      "provider": "openai",
+      "apiBase": "http://3.3.3.3/v1",
+      "model": "my-openai-compatible-model",
+      "requestOptions": { "headers": { "X-Auth-Token": "<API_KEY>" } }
+    }
+  ],
+  "tabAutocompleteModel": {
+    "title": "My Starcoder",
+    "provider": "ollama",
+    "model": "starcoder2:3b"
+  },
+  "embeddingsProvider": {
+    "provider": "openai",
+    "model": "text-embedding-ada-002",
+    "apiKey": "<YOUR_OPENAI_API_KEY>",
+    "maxEmbeddingChunkSize": 256,
+    "maxEmbeddingBatchSize": 5
+  },
+  "reranker": {
+    "name": "voyage",
+    "params": { "model": "rerank-2", "apiKey": "<YOUR_VOYAGE_API_KEY>" }
+  }
+}
+```
+
+**迁移后**
+
+config.yaml
+
+```yaml
+models:
+  - name: GPT-4
+    provider: openai
+    model: gpt-4
+    apiKey: <YOUR_OPENAI_API_KEY>
+    defaultCompletionOptions:
+      temperature: 0.5
+      maxTokens: 2000
+    roles:
+      - chat
+      - edit
+  - name: My Voyage Reranker
+    provider: voyage
+    model: rerank-2
+    apiKey: <YOUR_VOYAGE_API_KEY>
+    roles:
+      - rerank
+  - name: My Starcoder
+    provider: ollama
+    model: starcoder2:3b
+    roles:
+      - autocomplete
+  - name: My Ada Embedder
+    provider: openai
+    model: text-embedding-ada-002
+    apiKey: <YOUR_OPENAI_API_KEY>
+    roles:
+      - embed
+    embedOptions:
+      maxChunkSize: 256
+      maxBatchSize: 5
+  - name: Ollama Autodetect
+    provider: ollama
+    model: AUTODETECT
+    roles:
+      - chat
+  - name: My Open AI Compatible Model
+    provider: openai
+    model: my-openai-compatible-model
+    apiBase: http://3.3.3.3/v1
+    requestOptions:
+      headers:
+        X-Auth-Token: <API_KEY>
+    roles:
+      - chat
+      - apply
+```
+
+请注意，`repoMapFileSelection` 实验性模型角色已被弃用，仅在 `config.json` 中可用。
+
+### 上下文提供程序
+
+JSON `contextProviders` 字段被 YAML `context` 数组替换。
+
+- JSON `name` 映射到 `provider`
+- JSON `params` 映射到 `params`
+
+**迁移前**
+
+config.json
+
+```json
+{
+  "contextProviders": [
+    { "name": "docs" },
+    { "name": "codebase", "params": { "nRetrieve": 30, "nFinal": 3 } },
+    { "name": "diff", "params": {} }
+  ]
+}
+```
+
+**迁移后**
+
+config.yaml
+
+```yaml
+context:
+  - provider: docs
+  - provider: codebase
+    params:
+      nRetrieve: 30
+      nFinal: 3
+  - provider: diff
+```
+
+### 系统消息
+
+`systemMessage` 属性已被替换为一个接受字符串数组的 `rules` 属性。
+
+**迁移前**
+
+config.json
+
+```json
+{
+  "systemMessage": "Always give concise responses"
+}
+```
+
+**迁移后**
+
+config.yaml
+
+```yaml
+rules:
+  - Always give concise responses
+```
+
+### 提示
+
+您现在可以使用 `prompts` 字段来定义自定义提示，而不是使用 `customCommands`。
+
+**迁移前**
+
+config.json
+
+```json
+{
+  "customCommands": [
+    {
+      "name": "check",
+      "description": "Check for mistakes in my code",
+      "prompt": "{{{ input }}}\n\nPlease read the highlighted code and check for any mistakes. You should look for the following, and be extremely vigilant:\n- Syntax errors\n- Logic errors\n- Security vulnerabilities\n- Performance issues\n- Anything else that looks wrong\n\nOnce you find an error, please explain it as clearly as possible, but without using extra words. For example, instead of saying 'I think there is a syntax error on line 5', you should say 'Syntax error on line 5'. Give your answer as one bullet point per mistake found."
+    }
+  ]
+}
+```
+
+**迁移后**
+
+config.yaml
+
+```yaml
+prompts:
+  - name: check
+    description: Check for mistakes in my code
+    prompt: |
+      Please read the highlighted code and check for any mistakes. You should look for the following, and be extremely vigilant:
+        - Syntax errors
+        - Logic errors
+        - Security vulnerabilities
+        - Performance issues
+        - Anything else that looks wrong
+      Once you find an error, please explain it as clearly as possible, but without using extra words. For example, instead of saying 'I think there is a syntax error on line 5', you should say 'Syntax error on line 5'. Give your answer as one bullet point per mistake found.
+```
+
+### 文档
+
+文档配置基本相同，但 `title` 属性已被替换为 `name`。`startUrl`、`rootUrl` 和 `faviconUrl` 属性仍然存在。
+
+**迁移前**
+
+config.json
+
+```json
+{
+  "docs": [
+    {
+      "startUrl": "https://docs.nestjs.com/",
+      "title": "nest.js"
+    },
+    {
+      "startUrl": "https://mysite.com/docs/",
+      "title": "My site"
+    }
+  ]
+}
+```
+
+**迁移后**
+
+config.yaml
+
+```yaml
+docs:
+  - name: nest.js
+    startUrl: https://docs.nestjs.com/
+  - name: My site
+    startUrl: https://mysite.com/docs/
+```
+
+### MCP 服务器
+
+**属性：**
+
+- `name`（**必填**）：MCP 服务器的名称。
+- `command`（**必填**）：用于启动服务器的命令。
+- `args`：命令的可选参数数组。
+- `env`：服务器进程的可选环境变量映射。
+- `cwd`：运行命令的可选工作目录。可以是绝对路径或相对路径。
+
+**迁移前**
+
+config.json
+
+```json
+{
+  "experimental": {
+    "modelContextProtocolServers": [
+      {
+        "transport": {
+          "type": "stdio",
+          "command": "uvx",
+          "args": [
+            "mcp-server-sqlite",
+            "--db-path",
+            "/Users/NAME/test.db"
+          ],
+          "env": {
+            "KEY": "<VALUE>"
+          }
+        }
+      }
+    ]
+  }
+}
+```
+
+**迁移后**
+
+config.yaml
+
+```yaml
+mcpServers:
+  - name: My MCP Server
+    command: uvx
+    args:
+      - mcp-server-sqlite
+      - --db-path
+      - /Users/NAME/test.db
+    env:
+      KEY: <VALUE>
+```
+
+---
+
+## 已弃用的配置选项
+
+一些已弃用的 config.json 设置不再存储在配置中，而是已移至可通过用户设置（齿轮图标）编辑。如果在 config.json 中找到，它们将被自动迁移到用户设置并从 config.json 中删除。
+
+config.json 中的以下顶级字段已被弃用，没有 config.yaml 等效项：
+
+- 斜杠命令 (`slashCommands`)
+
+- 顶级 `requestOptions`
+
+- 顶级 `completionOptions`
+
+- `tabAutocompleteOptions`
+
+  - `disable`
+  - `maxPromptTokens`
+  - `debounceDelay`
+  - `maxSuffixPercentage`
+  - `prefixPercentage`
+  - `template`
+  - `onlyMyCode`
+
+- `analytics`
+
+config.json 中的以下顶级字段已被弃用。大多数与 UI 相关和用户特定的选项将移至 UI 中的设置页面
+
+- `customCommands`
+- `experimental`
+- `userToken`
+
+## 新的配置选项
+
+YAML 配置格式提供了 JSON 格式中不可用的新配置选项。有关更多信息，请参阅 [YAML 配置参考](/reference)。

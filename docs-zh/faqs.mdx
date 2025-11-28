@@ -1,0 +1,401 @@
+---
+title: "常见问题"
+description: "关于 Continue 的常见问题"
+---
+
+## 网络问题
+
+### 配置证书
+
+如果您看到 `fetch failed` 错误，并且您的网络需要自定义证书，您需要在配置文件中配置它们。在 `"models"` 数组中的每个对象中，添加 `requestOptions.caBundlePath`，如下所示：
+
+<Tabs>
+  <Tab title="YAML">
+    ```yaml
+    models:
+      - name: My Model
+        ...
+        requestOptions:
+          caBundlePath: /path/to/cert.pem
+    ```
+  </Tab>
+  <Tab title="JSON">
+    ```json
+    {
+      "models": [
+        {
+          "name": "My Model",
+          "...": "...",
+          "requestOptions": {
+            "caBundlePath": "/path/to/cert.pem"
+          }
+        }
+      ]
+    }
+    ```
+  </Tab>
+</Tabs>
+
+您还可以将 `requestOptions.caBundlePath` 设置为多个证书路径的数组。
+
+**_Windows VS Code 用户_**：安装 [win-ca](https://marketplace.visualstudio.com/items?itemName=ukoloff.win-ca) 扩展也应该能解决此问题。
+
+### VS Code 代理设置
+
+如果您使用 VS Code 并且需要通过代理发出请求，您可能已经通过 VS Code 的 [代理服务器支持](https://code.visualstudio.com/docs/setup/network#_proxy-server-support) 进行了设置。要再次检查是否启用了此功能，请使用 `cmd/ctrl` + `,` 打开设置并搜索 "Proxy Support"。除非设置为 "off"，否则 VS Code 负责向代理发出请求。
+
+### code-server
+
+Continue 可以在 [code-server](https://coder.com/) 中使用，但如果您在日志中遇到包含 "This is likely because the editor is not running in a secure context" 的错误，请参阅 [他们关于安全暴露 code-server 的文档](https://coder.com/docs/code-server/latest/guide#expose-code-server)。
+
+## 配置更改未在 VS Code 中显示
+
+如果您对配置进行了更改（添加、修改或删除），但更改未在 VS Code 的 Continue 扩展中显示，请尝试重新加载 VS Code 窗口：
+
+1. 打开命令面板（`cmd/ctrl` + `shift` + `P`）
+2. 输入 "Reload Window"
+3. 选择重新加载选项
+
+这将重新启动 VS Code 并重新加载所有扩展，这应该会使您的配置更改可见。
+
+## 我安装了 Continue，但没有看到侧边栏窗口
+
+默认情况下，Continue 窗口位于 VS Code 的左侧，但也可以拖动到右侧，这是我们在教程中推荐的。如果您之前安装了 Continue 并将其移动到右侧，它可能仍然在那里。您可以使用 cmd/ctrl+L 或点击 VS Code 右上角的按钮打开右侧边栏来显示 Continue。
+
+## 我收到了来自 OpenAI 的 404 错误
+
+如果您输入了有效的 API 密钥和模型，但仍然收到来自 OpenAI 的 404 错误，这可能是因为您需要向您的账单账户添加信用额度。您可以从 [账单控制台](https://platform.openai.com/settings/organization/billing/overview) 进行操作。如果您只是想检查这是否确实是错误的原因，您可以尝试向您的账户添加 1 美元并检查错误是否仍然存在。
+
+## 我收到了来自 OpenRouter 的 404 错误
+
+如果您输入了有效的 API 密钥和模型，但仍然收到来自 OpenRouter 的 404 错误，这可能是因为不支持函数调用的模型在发送请求时会向 Continue 返回错误。示例错误：`HTTP 404 Not Found from https://openrouter.ai/api/v1/chat/completions`
+
+## 索引问题
+
+如果您在索引方面遇到持续错误，我们的建议是从头开始重建您的索引。请注意，对于大型代码库，这可能需要一些时间。
+
+这可以使用以下命令完成：`Continue: Rebuild codebase index`。
+
+## 代理模式不可用或工具不工作
+
+如果代理模式显示为灰色或工具无法正常工作，这可能是由于模型能力配置问题。
+
+<Info>
+  Continue
+  对没有原生工具支持的模型使用系统消息工具作为回退，因此大多数模型应该自动与代理模式一起工作。
+</Info>
+
+### 检查您的模型是否支持工具
+
+1. 并非所有模型都支持原生工具/函数调用，但 Continue 会自动使用系统消息工具作为回退
+2. 尝试向模型配置添加 `capabilities: ["tool_use"]` 以强制工具支持
+3. 验证您的提供商支持函数调用或系统消息工具是否正常工作
+
+### 工具不工作
+
+如果工具未被调用：
+
+1. 确保 `tool_use` 在您的能力列表中
+2. 检查您的 API 端点是否实际支持函数调用
+3. 某些提供商可能使用不同的函数调用格式
+
+### 图像无法上传
+
+如果您无法上传图像：
+
+1. 将 `image_input` 添加到能力列表中
+2. 确保您的模型实际上支持视觉（例如，gpt-4-vision、claude-3）
+3. 检查您的提供商是否传递图像数据
+
+### 添加能力
+
+如果 Continue 的自动检测不正常工作，您可以在 `config.yaml` 中手动添加能力：
+
+```yaml
+models:
+  - name: my-model
+    provider: openai
+    model: gpt-4
+    capabilities:
+      - tool_use
+      - image_input
+```
+
+### 与提供商验证
+
+某些代理服务（如 OpenRouter）或自定义部署可能不会保留工具调用能力。请查看您提供商的文档。
+
+### 验证当前能力
+
+要查看 Continue 为您的模型检测到的能力：
+
+1. 检查模式选择器工具提示 - 它们会指示工具是否可用
+2. 尝试上传图像 - 如果禁用，模型缺少 `image_input`
+3. 检查代理模式是否可用 - 需要 `tool_use`
+
+有关完整的配置详细信息，请参阅 [模型能力指南](/customize/deep-dives/model-capabilities)。
+
+## Android Studio - 聊天中显示 "Nothing to show"
+
+这可以通过选择 `Actions > Choose Boot runtime for the IDE` 然后选择最新版本，然后重新启动 Android Studio 来修复。[有关详细信息，请参阅此线程](https://github.com/continuedev/continue/issues/596#issuecomment-1789327178)。
+
+## 我收到了 "Codebase indexing disabled - Your Linux system lacks required CPU features (AVX2, FMA)" 通知
+
+我们使用 LanceDB 作为代码库搜索功能的向量数据库。在 x64 Linux 系统上，LanceDB 需要特定的 CPU 功能（FMA 和 AVX2），这些功能在较旧的处理器上可能不可用。
+
+大多数 Continue 功能将正常工作，包括自动完成和聊天。但是，依赖于代码库索引的命令，如 `@codebase`、`@files` 和 `@folder`，将被禁用。
+
+有关此要求的更多详细信息，请参阅 [LanceDB 问题 #2195](https://github.com/lancedb/lance/issues/2195)。
+
+## Ollama 问题
+
+有关设置和故障排除 Ollama 的综合指南，请参阅 [Ollama 指南](/guides/ollama-guide)。
+
+### 无法连接到本地 Ollama 实例
+
+如果您收到 "Unable to connect to local Ollama instance" 错误：
+
+1. **验证 Ollama 正在运行**：在浏览器中检查 http://localhost:11434 - 您应该看到 "Ollama is running"
+2. **正确启动 Ollama**：使用 `ollama serve`（而不仅仅是 `ollama run model-name`）
+3. **检查您的配置**：确保您的 `config.yaml` 有正确的设置：
+
+```yaml
+models:
+  - name: llama3
+    provider: ollama
+    model: llama3:latest
+```
+
+### 无法连接到远程 Ollama (EHOSTUNREACH/ECONNREFUSED)
+
+连接到另一台机器上的 Ollama 时：
+
+1. **配置 Ollama 监听所有接口**：
+
+   - 设置环境变量：`OLLAMA_HOST=0.0.0.0:11434`
+   - 对于 systemd：编辑 `/etc/systemd/system/ollama.service` 并在 `[Service]` 下添加：
+     ```
+     Environment="OLLAMA_HOST=0.0.0.0:11434"
+     Environment="OLLAMA_ORIGINS=*"
+     ```
+   - 重新启动 Ollama：`sudo systemctl restart ollama`
+
+2. **更新您的 Continue 配置**：
+
+```yaml
+models:
+  - name: llama3
+    provider: ollama
+    apiBase: http://192.168.1.136:11434 # 使用您服务器的 IP
+    model: llama3:latest
+```
+
+3. **检查防火墙设置**：确保服务器上的端口 11434 已打开
+
+### Ollama 在 WSL 中不工作
+
+对于遇到连接问题的 WSL 用户：
+
+#### Windows 11 22H2+（推荐）
+
+创建或编辑 `%UserProfile%\.wslconfig`：
+
+```ini
+[wsl2]
+networkingMode=mirrored
+```
+
+然后重新启动 WSL：`wsl --shutdown`
+
+#### 较旧的 Windows/WSL 版本
+
+在 PowerShell 中（以管理员身份）：
+
+```powershell
+# 添加防火墙规则
+New-NetFireWallRule -DisplayName 'WSL Ollama' -Direction Inbound -LocalPort 11434 -Action Allow -Protocol TCP
+New-NetFireWallRule -DisplayName 'WSL Ollama' -Direction Outbound -LocalPort 11434 -Action Allow -Protocol TCP
+
+# 获取 WSL IP（在 WSL 中运行 'ip addr' 以查找 eth0 IP）
+# 然后添加端口代理（将 <WSL_IP> 替换为您的实际 IP）
+netsh interface portproxy add v4tov4 listenport=11434 listenaddress=0.0.0.0 connectport=11434 connectaddress=<WSL_IP>
+```
+
+### Docker 容器无法连接到主机 Ollama
+
+在 Docker 中运行 Continue 或其他需要连接到主机 Ollama 的工具时：
+
+**Windows/Mac**：使用 `host.docker.internal`：
+
+```yaml
+models:
+  - name: llama3
+    provider: ollama
+    apiBase: http://host.docker.internal:11434
+    model: llama3:latest
+```
+
+**Linux**：使用 Docker 桥接 IP（通常为 `172.17.0.1`）：
+
+```yaml
+models:
+  - name: llama3
+    provider: ollama
+    apiBase: http://172.17.0.1:11434
+    model: llama3:latest
+```
+
+**Docker run 命令**：添加主机映射：
+
+```bash
+docker run -d --add-host=host.docker.internal:host-gateway ...
+```
+
+### 远程 Ollama 解析错误
+
+如果您收到远程 Ollama 的解析错误：
+
+1. **验证模型已安装在远程**：
+   ```bash
+   OLLAMA_HOST=192.168.1.136:11434 ollama list
+   ```
+2. **安装缺失的模型**：
+
+   ```bash
+   OLLAMA_HOST=192.168.1.136:11434 ollama pull llama3
+   ```
+
+3. **检查 URL 格式**：确保您对本地网络地址使用 `http://` 而不是 `https://`
+
+## 本地配置
+
+### 管理本地密钥和环境变量
+
+有关完全离线运行 Continue 而无需互联网访问的信息，请参阅 [无互联网运行 Continue 指南](/guides/running-continue-without-internet)。
+
+Continue 支持多种本地管理密钥的方法，按以下顺序搜索：
+
+1. **工作区 `.env` 文件**：在工作区根目录中放置 `.env` 文件
+2. **工作区 Continue 文件夹**：在 `<workspace-root>/.continue/.env` 中放置 `.env` 文件
+3. **全局 `.env` 文件**：在 `~/.continue/.env` 中放置 `.env` 文件用于用户级密钥
+4. **进程环境变量**：使用标准系统环境变量
+
+#### 创建 `.env` 文件
+
+在以下位置之一创建 `.env` 文件：
+
+- **每个工作区**：`<workspace-root>/.env` 或 `<workspace-root>/.continue/.env`
+- **全局**：`~/.continue/.env`
+
+示例 `.env` 文件：
+
+```
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+CUSTOM_API_URL=https://api.example.com
+```
+
+#### 在 config.yaml 中使用密钥
+
+使用 `secrets` 命名空间引用您的本地密钥：
+
+```yaml
+models:
+  - provider: openai
+    apiKey: ${{ secrets.OPENAI_API_KEY }}
+```
+
+#### Mission Control 管理的密钥
+
+对于集中式团队密钥管理，在您的 config.yaml 中使用 `${{ inputs.SECRET_NAME }}` 语法，并在 [https://hub.continue.dev/settings/secrets](https://hub.continue.dev/settings/secrets) 上管理它们：
+
+```yaml
+models:
+  - provider: openai
+    apiKey: ${{ inputs.OPENAI_API_KEY }}
+```
+
+#### 重要说明
+
+- **永远不要提交 `.env` 文件** 到版本控制 - 将它们添加到 `.gitignore`
+- `.env` 文件使用标准 dotenv 格式（KEY=value，不需要引号）
+- 密钥在 Continue 启动时加载，因此更改后请重启您的 IDE
+- 当两者都存在时，本地 `.env` 文件优先于 Hub 密钥
+
+#### 密钥故障排除
+
+如果您的 API 密钥未被识别：
+
+1. 检查 `.env` 文件是否在正确位置
+2. 确保 `.env` 文件中的值周围没有引号
+3. 添加/更改密钥后重启您的 IDE
+4. 验证变量名完全匹配（区分大小写）
+5. 检查您的 `.env` 文件是否有正确的行尾（LF，而不是 Windows 上的 CRLF）
+
+### 在本地使用模型附加组件
+
+您可以在本地配置中使用 Continue Mission Control 中的模型附加组件，使用 `uses:` 语法。这允许您引用预配置的模型块，而无需复制配置。
+
+#### 要求
+
+- 您必须登录到 Continue
+- 需要互联网连接（模型附加组件从 Mission Control 获取）
+
+#### 用法
+
+在您的本地 `config.yaml` 中，使用格式 `provider/model-name` 引用模型附加组件：
+
+```yaml
+name: My Local Config
+version: 0.0.1
+schema: v1
+models:
+  - uses: ollama/llama3.1-8b
+  - uses: anthropic/claude-3.5-sonnet
+  - uses: openai/gpt-4
+```
+
+#### 与本地配置结合使用
+
+您可以将中心模型附加组件与本地模型结合使用：
+
+```yaml
+name: My Local Config
+version: 0.0.1
+schema: v1
+models:
+  # 中心模型附加组件
+  - uses: anthropic/claude-3.5-sonnet
+
+  # 本地模型配置
+  - name: Local Ollama
+    provider: ollama
+    model: codellama:latest
+    apiBase: http://localhost:11434
+```
+
+#### 覆盖附加组件设置
+
+您可以覆盖模型附加组件的特定设置：
+
+```yaml
+models:
+  - uses: ollama/llama3.1-8b
+    override:
+      apiBase: http://192.168.1.100:11434 # 使用远程 Ollama 服务器
+      roles:
+        - chat
+        - autocomplete
+```
+
+此功能允许您在团队中保持一致的模型配置，同时在需要时允许本地自定义。
+
+## 如何重置扩展的状态？
+
+Continue 将其数据存储在 `~/.continue` 目录中（Windows 上为 `%USERPROFILE%\.continue`）。
+
+如果您想执行扩展的完全重置，包括删除所有配置文件、索引等，您可以删除此目录，卸载，然后重新安装。
+
+## 仍然有问题？
+
+您还可以加入我们的 Discord 社区 [这里](https://discord.gg/vapESyrFmJ) 获取额外支持和 GitHub 讨论。或者，您可以 [这里](https://github.com/continuedev/continue/issues/new?assignees=&labels=bug&projects=&template=bug-report-%F0%9F%90%9B.md&title=) 创建 GitHub 问题，提供您的问题详情，我们将能够更快地帮助您。

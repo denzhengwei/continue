@@ -1,0 +1,41 @@
+---
+title: "聊天模式上下文选择"
+sidebarTitle: "上下文选择"
+description: "了解 Continue 如何为您的聊天请求选择相关上下文，包括文本输入、高亮代码、活动文件。"
+---
+
+## 如何使用文本输入
+
+在输入框中输入问题或指令是唯一必需的上下文。
+
+## 如何包含高亮代码
+
+您通过按 cmd/ctrl + L（VS Code）或 cmd/ctrl + J（JetBrains）选择的高亮代码将包含在您的提示中。
+
+## 如何包含活动文件
+
+您可以在发送请求时按 opt/alt + enter 将当前打开的文件作为上下文包含在内。
+
+## 如何包含特定文件
+
+您可以通过输入 '@Files' 并选择文件来包含当前工作区中的特定文件。
+
+## 代码库搜索
+
+为了更好地了解代码库，请参阅我们的 [关于让代理模式了解代码库和文档的指南](/guides/codebase-documentation-awareness)。
+
+## 如何包含文档站点
+
+为了更好地了解文档，请参阅我们的 [关于让代理模式了解代码库和文档的指南](/guides/codebase-documentation-awareness)。
+
+## 如何包含终端内容
+
+您可以通过输入 '@Terminal' 来包含 IDE 中终端的内容。
+
+## 如何包含 Git Diff
+
+您可以通过输入 '@Git Diff' 来包含您对当前分支所做的所有更改。
+
+## 如何使用其他上下文提供程序
+
+您可以在 [这里](/customize/deep-dives/custom-providers) 查看内置上下文提供程序的完整列表。

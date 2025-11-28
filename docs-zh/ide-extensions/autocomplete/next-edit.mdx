@@ -1,0 +1,146 @@
+---
+title: "Next Edit"
+description: "了解 Continue 的 Next Edit 功能如何使用 AI 预测和建议您的下一次代码更改，超越传统的自动补全，预测整个代码修改"
+---
+
+<Warning>
+  Next Edit 目前是一个实验性功能。它需要在您的 Continue 自动补全设置中配置
+  [Instinct](https://hub.continue.dev/continuedev/instinct) 或 [Mercury Coder
+  model](https://hub.continue.dev/inception/mercury-coder)，并且目前不适用于 JetBrains
+  使用。
+</Warning>
+
+## 什么是 Next Edit？
+
+Next Edit 是一个先进的 AI 驱动的代码预测功能，它可以预测您接下来会在代码中做出的更改。与传统的自动补全不同，传统自动补全是对您的输入做出反应，而 Next Edit 会主动分析您最近的编辑和编码模式，在您开始输入之前就建议整个代码修改。
+
+可以将其视为拥有一个 AI 配对程序员，它理解您的编码流程，并在您的开发过程中建议合乎逻辑的下一步。
+
+## Next Edit 如何工作
+
+### 预测过程
+
+1. **上下文分析**：捕获您当前的光标位置和最近的编辑历史
+2. **模式识别**：分析您的编码模式和周围的代码上下文
+3. **下一步预测**：使用专门的 AI 模型预测您接下来可能会做出的更改
+4. **视觉呈现**：将预测显示为差异叠加层，而不是简单的文本补全
+5. **交互式审查**：让您接受（Tab）或拒绝（Esc）建议的更改
+6. **跳转到下一个编辑位置**：让您跳转到（Tab）下一个编辑位置或拒绝（Esc）
+
+### 智能触发
+
+当以下情况发生时，Next Edit 会自动激活：
+
+- 您完成了代码更改
+- AI 检测到逻辑延续点
+- 专门的 next-edit 模型可用
+- 当前上下文表明可预测的下一步
+
+## Next Edit 与传统自动补全的比较
+
+<AccordionGroup>
+  <Accordion title="预测范围">
+    **自动补全**：完成您正在输入的当前行或语句
+    
+    **Next Edit**：预测跨多行的整个代码修改
+  </Accordion>
+
+  <Accordion title="用户交互">
+    **自动补全**：在您的光标位置显示幽灵文本
+
+    **Next Edit**：显示差异叠加层，显示更改前后的对比，同时如果更改纯粹是添加性的，也会显示幽灵文本。
+
+   </Accordion>
+
+    <Accordion title="时机">
+     **自动补全**：反应式 - 响应您当前正在输入的内容
+
+     **Next Edit**：主动式 - 预测您接下来会做什么
+    </Accordion>
+
+  <Accordion title="上下文感知">
+    **自动补全**：专注于立即的代码补全
+    
+    **Next Edit**：分析最近的编辑模式和更广泛的代码上下文
+  </Accordion>
+</AccordionGroup>
+
+## 如何使用 Next Edit
+
+### 前提条件
+
+Next Edit 需要：
+
+- 兼容的 AI 模型（Mercury Coder 或 Instinct）
+- VS Code（JetBrains 支持即将推出）
+- **API 密钥**：组织可以将 API 密钥添加到 [组织密钥](/hub/secrets/secret-types) 中，以便团队访问。个人用户需要在其 [模型配置](/customize/model-providers/overview) 中提供自己的 API 密钥
+
+<Note>
+  要使用 Next Edit，您必须在 Continue 自动补全模型设置中配置 Instinct 或 Mercury Coder 模型。该模型是专门为 next edit 预测设计的。加载后，您必须重新加载 VS Code 才能激活它。
+  <img
+    src="/images/ide-extensions/autocomplete/images/instinct-autocomplete.png"
+    alt="Next Edit 模型设置"
+  />
+</Note>
+
+### 使用 Next Edit 预测
+
+<Steps>
+  <Step title="进行代码更改">
+    正常编辑您的代码。Next Edit 将分析您的更改模式。
+  </Step>
+
+<Step title="查看预测">
+  当 Next Edit 激活时，您会看到一个差异叠加层，显示可编辑区域中的预测更改。
+</Step>
+
+<Step title="接受或拒绝">
+  - **Tab**：接受预测并应用更改 - **Esc**：拒绝预测并继续正常编码
+</Step>
+
+  <Step title="继续编码">
+    如果接受，您的光标将移动到最后更改的行。如果拒绝，您的工作流将继续不受中断。
+  </Step>
+</Steps>
+
+## Next Edit 的模型要求是什么？
+
+### 专门模型
+
+Next Edit 需要专门为代码预测训练的 AI 模型：
+
+- **Mercury Coder**：针对 next edit 预测优化的主要模型
+- **Instinct**：领先的开源 Next Edit 模型，由 Continue 训练
+
+### 自动检测
+
+当以下情况发生时，Continue 会自动启用 Next Edit：
+
+1. 您配置的自动补全模型支持 next edit 功能
+2. 您拥有开发团队访问权限
+3. 当前代码上下文表明可预测的下一步
+
+## 最佳实践
+
+<CardGroup cols={2}>
+  <Card title="信任过程" icon="robot">
+    让 Next Edit 观察您的编码模式几个编辑会话，然后再期望高度准确的预测。
+  </Card>
+
+<Card title="仔细审查" icon="magnifying-glass">
+  在接受之前始终审查建议的更改，尤其是对于复杂的逻辑修改。
+</Card>
+
+<Card title="提供反馈" icon="message">
+  有反馈吗？我们很想听到。__[将您的想法添加到我们的反馈讨论中](https://github.com/continuedev/continue/discussions/categories/feedback)__
+  帮助我们改进。
+</Card>
+
+  <Card title="与其他功能结合使用" icon="puzzle-piece">
+    将 Next Edit 与 Continue 的聊天和代理模式结合使用，实现全面的 AI 辅助开发。
+  </Card>
+</CardGroup>
+
+---
+
+_Next Edit 代表了 Continue 对主动 AI 编码辅助的愿景，它能够预测开发者的需求，而不仅仅是对输入做出反应。随着这一功能的发展，它将成为加速开发工作流和减少重复编码任务的强大工具。_

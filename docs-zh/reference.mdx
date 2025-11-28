@@ -1,0 +1,470 @@
+---
+title: "config.yaml 参考"
+description: "Continue.dev 用于构建自定义编码代理的 config.yaml 格式的综合指南。了解如何使用 YAML 配置定义模型、上下文提供程序、规则、提示词等。"
+---
+
+## 介绍
+
+Continue 代理使用 `config.yaml` 规范定义。
+
+**代理**由模型、规则和工具（MCP 服务器）组成。
+
+<Columns cols={2}>
+<Card title="配置模型、规则和工具" icon="cube" href="/guides/configuring-models-rules-tools">
+了解如何使用 Continue 的配置系统，包括使用中心模型、规则和工具，创建本地配置，以及组织您的设置。
+</Card>
+
+  <Card title="理解配置" icon="robot" href="/guides/understanding-configs">
+  了解如何构建和配置配置文件，理解它们的功能，并为您的开发工作流自定义它们。
+  </Card>
+</Columns>
+
+## 属性
+
+以下是可以在 `config.yaml` 中设置的每个属性的详细信息。
+
+**除非明确标记为必填，否则所有级别的所有属性都是可选的。**
+
+`config.yaml` 配置文件中的顶级属性包括：
+
+- [`name`](#name)（**必填**）
+- [`version`](#version)（**必填**）
+- [`schema`](#schema)（**必填**）
+- [`models`](#models)
+- [`context`](#context)
+- [`rules`](#rules)
+- [`prompts`](#prompts)
+- [`docs`](#docs)
+- [`mcpServers`](#mcpservers)
+- [`data`](#data)
+
+---
+
+### `name`
+
+`name` 属性指定您的项目或配置的名称。
+
+```yaml title="config.yaml"
+name: MyProject
+```
+
+---
+
+### `version`
+
+`version` 属性指定您的项目或配置的版本。
+
+### `schema`
+
+`schema` 属性指定用于 `config.yaml` 的架构版本，例如 `v1`
+
+---
+
+### `models`
+
+`models` 部分定义配置中使用的语言模型。模型用于聊天、编辑和总结等功能。
+
+**属性：**
+
+- `name`（**必填**）：用于在配置中标识模型的唯一名称。
+
+- `provider`（**必填**）：模型的提供商（例如，`openai`、`ollama`）。
+
+- `model`（**必填**）：特定模型名称（例如，`gpt-4`、`starcoder`）。
+
+- `apiBase`：可用于覆盖每个模型指定的默认 API 基础。
+
+- `roles`：指定该模型可以履行的角色的数组，例如 `chat`、`autocomplete`、`embed`、`rerank`、`edit`、`apply`、`summarize`。默认值为 `[chat, edit, apply, summarize]`。请注意，`summarize` 角色目前未使用。
+
+- `capabilities`：表示模型能力的字符串数组，将覆盖 Continue 基于提供商和模型的自动检测。有关详细信息，请参阅 [模型能力指南](/customize/deep-dives/model-capabilities)。支持的能力包括：
+
+  - `tool_use`：启用函数/工具调用支持（代理模式所需）
+  - `image_input`：启用图像上传和处理支持
+
+  Continue 会自动检测大多数模型的这些能力，但您可以在使用自定义部署或自动检测不正常工作时覆盖此设置。
+
+- `maxStopWords`：允许的最大停止词数量，以避免使用广泛列表时出现 API 错误。
+
+- `promptTemplates`：可用于覆盖不同模型角色的默认提示模板。有效值为 [`chat`]()、[`edit`](/customize/model-roles/edit#edit-prompt-templating)、[`apply`](/customize/model-roles/apply#apply-prompt-templating) 和 [`autocomplete`](/customize/model-roles/autocomplete#autocomplete-prompt-templating)。`chat` 属性必须是有效的模板名称，例如 `llama3` 或 `anthropic`。
+
+- `chatOptions`：如果模型包含 `chat` 角色，这些设置适用于代理和聊天模式：
+
+  - `baseSystemMessage`：可用于覆盖 **聊天** 模式的默认系统提示。
+  - `baseAgentSystemMessage`：可用于覆盖 **代理** 模式的默认系统提示。
+  - `basePlanSystemMessage`：可用于覆盖 **计划** 模式的默认系统提示。
+
+- `embedOptions`：如果模型包含 `embed` 角色，这些设置适用于嵌入：
+
+  - `maxChunkSize`：每个文档块的最大令牌数。最小值为 128 令牌。
+  - `maxBatchSize`：每个请求的最大块数。最小值为 1 个块。
+
+- `defaultCompletionOptions`：模型设置的默认完成选项。
+
+  - `contextLength`：模型的最大上下文长度，通常以令牌为单位。
+  - `maxTokens`：在完成中生成的最大令牌数。
+  - `temperature`：控制完成的随机性。值范围从 `0.0`（确定性）到 `1.0`（随机性）。
+  - `topP`：用于核采样的累积概率。
+  - `topK`：每步考虑的最大令牌数。
+  - `stop`：将终止完成的停止令牌数组。
+  - `reasoning`：布尔值，用于启用 Anthropic Claude 3.7+ 和某些 Ollama 模型的思考/推理功能。
+  - `reasoningBudgetTokens`：Anthropic Claude 3.7+ 模型中用于思考/推理的预算令牌。
+
+- `requestOptions`：特定于模型的 HTTP 请求选项。
+
+  - `timeout`：对语言模型的每个请求的超时时间。
+
+  - `verifySsl`：是否验证请求的 SSL 证书。
+
+  - `caBundlePath`：用于 HTTP 请求的自定义 CA 捆绑包的路径。
+
+  - `proxy`：用于 HTTP 请求的代理 URL。
+
+  - `headers`：用于 HTTP 请求的自定义标头。
+
+  - `extraBodyProperties`：要与 HTTP 请求体合并的其他属性。
+
+  - `noProxy`：应绕过指定代理的主机名列表。
+
+  - `clientCertificate`：用于 HTTP 请求的客户端证书。
+    - `cert`：客户端证书文件的路径。
+    - `key`：客户端证书密钥文件的路径。
+    - `passphrase`：客户端证书密钥文件的可选密码。
+
+- `autocompleteOptions`：如果模型包含 `autocomplete` 角色，这些设置适用于标签自动完成：
+
+  - `disable`：如果为 `true`，则禁用此模型的自动完成。
+  - `maxPromptTokens`：自动完成提示的最大令牌数。
+  - `debounceDelay`：触发自动完成前的延迟（毫秒）。
+  - `modelTimeout`：自动完成请求的模型超时（毫秒）。
+  - `maxSuffixPercentage`：为后缀分配的最大提示百分比。
+  - `prefixPercentage`：为前缀分配的输入百分比。
+  - `transform`：如果为 `false`，则禁用多行完成的修剪。默认为 `true`。对于生成更好的多行完成而无需转换的模型很有用。
+  - `template`：使用 Mustache 语法的自定义自动完成模板。您可以使用 `{{{ prefix }}}`、`{{{ suffix }}}`、`{{{ filename }}}`、`{{{ reponame }}}` 和 `{{{ language }}}` 变量。
+  - `onlyMyCode`：仅包含存储库中的代码作为上下文。
+  - `useCache`：如果为 `true`，则启用完成的缓存。
+  - `useImports`：如果为 `true`，则在上下文中包含导入。
+  - `useRecentlyEdited`：如果为 `true`，则在上下文中包含最近编辑的文件。
+  - `useRecentlyOpened`：如果为 `true`，则在上下文中包含最近打开的文件。
+
+**示例：**
+
+```yaml title="config.yaml"
+models:
+  - name: GPT-4o
+    provider: openai
+    model: gpt-4o
+    roles:
+      - chat
+      - edit
+      - apply
+    defaultCompletionOptions:
+      temperature: 0.7
+      maxTokens: 1500
+  - name: Codestral
+    provider: mistral
+    model: codestral-latest
+    roles:
+      - autocomplete
+    autocompleteOptions:
+      debounceDelay: 250
+      maxPromptTokens: 1024
+      onlyMyCode: true
+  - name: My Model - OpenAI-Compatible
+    provider: openai
+    apiBase: http://my-endpoint/v1
+    model: my-custom-model
+    capabilities:
+      - tool_use
+      - image_input
+    roles:
+      - chat
+      - edit
+      - apply
+```
+
+---
+
+### `context`
+
+`context` 部分定义上下文提供程序，为语言模型提供额外信息或上下文。每个上下文提供程序可以使用特定参数进行配置。
+
+有关每个上下文提供程序的用法/参数的更多信息，请参阅 [此处](/customize/deep-dives/custom-providers)
+
+**属性：**
+
+- `provider`（**必填**）：上下文提供程序的标识符或名称（例如，`code`、`docs`、`web`）
+- `name`：提供程序的可选名称
+- `params`：用于配置上下文提供程序行为的可选参数。
+
+**示例：**
+
+```yaml title="config.yaml"
+context:
+  - provider: file
+  - provider: code
+  - provider: diff
+  - provider: http
+    name: Context Server 1
+    params:
+      url: "https://api.example.com/server1"
+  - provider: terminal
+```
+
+---
+
+### `rules`
+
+规则会被连接到所有 [代理](/ide-extensions/agent/quick-start)、[聊天](/ide-extensions/chat/quick-start) 和 [编辑](/ide-extensions/edit/quick-start) 请求的系统消息中。
+
+配置示例：
+
+```yaml title="config.yaml"
+rules:
+  - uses: sanity/sanity-opinionated # 存储在 Continue Mission Control 上的规则文件
+  - uses: file://user/Desktop/rules.md # 存储在本地计算机上的规则文件
+```
+
+规则文件示例：
+
+```md title="rules.md"
+---
+name: Pirate rule
+---
+
+Talk like a pirate
+```
+
+有关更多详细信息，请参阅 [规则深入探讨](/customize/deep-dives/rules)。
+
+---
+
+### `prompts`
+
+提示词可以使用 <kbd>/</kbd> 命令调用。
+
+配置示例：
+
+```yaml title="config.yaml"
+prompts:
+  - uses: supabase/create-functions # 存储在 Continue Mission Control 上的提示词文件
+  - uses: file://user/Desktop/prompts.md # 存储在本地计算机上的提示词文件
+```
+
+提示词文件示例：
+
+```md title="prompts.md"
+---
+name: Make pirate comments
+invokable: true
+---
+
+Rewrite all comments in the active file to talk like a pirate
+```
+
+有关更多详细信息，请参阅 [提示词深入探讨](/customize/deep-dives/prompts)。
+
+---
+
+### `docs`
+
+要索引的文档站点列表。
+
+**属性：**
+
+- `name`（**必填**）：文档站点的名称，显示在下拉菜单等位置。
+- `startUrl`（**必填**）：用于爬取的起始页面 - 通常是文档的根页面或介绍页面
+- `favicon`：站点图标的 URL（默认值为 `startUrl` 中的 `/favicon.ico`）。
+- `useLocalCrawling`：跳过默认爬虫，仅使用本地爬虫进行爬取。
+
+**示例：**
+
+```yaml title="config.yaml"
+docs:
+  - name: Continue
+    startUrl: https://docs.continue.dev/intro
+    favicon: https://docs.continue.dev/favicon.ico
+```
+
+---
+
+### `mcpServers`
+
+[模型上下文协议](https://modelcontextprotocol.io/introduction) 是 Anthropic 提出的一项标准，用于统一提示词、上下文和工具使用。Continue 通过 MCP 上下文提供程序支持任何 MCP 服务器。
+
+**属性：**
+
+- `name`（**必填**）：MCP 服务器的名称。
+- `command`（**必填**）：用于启动服务器的命令。
+- `args`：命令的可选参数数组。
+- `env`：服务器进程的可选环境变量映射。
+- `cwd`：运行命令的可选工作目录。可以是绝对路径或相对路径。
+- `requestOptions`：`sse` 和 `streamable-http` 服务器的可选请求选项。格式与 [模型 requestOptions](#models) 相同。
+- `connectionTimeout`：与 MCP 服务器 **初始** 连接的可选超时时间
+
+**示例：**
+
+```yaml title="config.yaml"
+mcpServers:
+  - name: My MCP Server
+    command: uvx
+    args:
+      - mcp-server-sqlite
+      - --db-path
+      - ./test.db
+    cwd: /Users/NAME/project
+    env:
+      NODE_ENV: production
+```
+
+### `data`
+
+[开发数据](/customize/deep-dives/development-data) 将发送到的目标。
+
+**属性：**
+
+- `name`（**必填**）：数据目标的显示名称
+- `destination`（**必填**）：将接收数据的目标/端点。可以是：
+  - 一个 HTTP 端点，将接收带有 JSON blob 的 POST 请求
+  - 一个文件 URL，指向将事件转储到 `.jsonl` 文件的目录
+- `schema`（**必填**）：要发送的 JSON blob 的架构版本。选项包括 `0.1.0` 和 `0.2.0`
+- `events`：要包含的事件名称数组。如果未指定，默认为所有事件。
+- `level`：事件字段的预定义过滤器。选项包括 `all` 和 `noCode`；后者排除文件内容、提示词和完成等数据。默认为 `all`
+- `apiKey`：随请求发送的 API 密钥（Bearer 标头）
+- `requestOptions`：事件 POST 请求的选项。格式与 [模型 requestOptions](#models) 相同。
+
+**示例：**
+
+```yaml title="config.yaml"
+data:
+  - name: Local Data Bank
+    destination: file:///Users/dallin/Documents/code/continuedev/continue-extras/external-data
+    schema: 0.2.0
+    level: all
+  - name: My Private Company
+    destination: https://mycompany.com/ingest
+    schema: 0.2.0
+    level: noCode
+    events:
+      - autocomplete
+      - chatInteraction
+```
+
+---
+
+## 完整的 YAML 配置示例
+
+综合起来，以下是 `config.yaml` 配置文件的完整示例：
+
+```yaml title="config.yaml"
+name: MyProject
+version: 0.0.1
+schema: v1
+models:
+  - uses: anthropic/claude-3.5-sonnet
+    with:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    override:
+      defaultCompletionOptions:
+        temperature: 0.8
+  - name: GPT-4
+    provider: openai
+    model: gpt-4
+    roles:
+      - chat
+      - edit
+    defaultCompletionOptions:
+      temperature: 0.5
+      maxTokens: 2000
+    requestOptions:
+      headers:
+        Authorization: Bearer YOUR_OPENAI_API_KEY
+  - name: Ollama Starcoder
+    provider: ollama
+    model: starcoder
+    roles:
+      - autocomplete
+    autocompleteOptions:
+      debounceDelay: 350
+      maxPromptTokens: 1024
+      onlyMyCode: true
+    defaultCompletionOptions:
+      temperature: 0.3
+      stop:
+        - "\n"
+rules:
+  - Give concise responses
+  - Always assume TypeScript rather than JavaScript
+prompts:
+  - name: test
+    description: Unit test a function
+    prompt: |
+      Please write a complete suite of unit tests for this function. You should use the Jest testing framework.
+      The tests should cover all possible edge cases and should be as thorough as possible.
+      You should also include a description of each test case.
+  - uses: myprofile/my-favorite-prompt
+context:
+  - provider: diff
+  - provider: file
+  - provider: code
+mcpServers:
+  - name: DevServer
+    command: npm
+    args:
+      - run
+      - dev
+    env:
+      PORT: "3000"
+data:
+  - name: My Private Company
+    destination: https://mycompany.com/ingest
+    schema: 0.2.0
+    level: noCode
+    events:
+      - autocomplete
+      - chatInteraction
+```
+
+## 使用 YAML 锚点避免配置重复
+
+您还可以使用节点锚点来避免属性重复。为此，需要添加 YAML 版本标头 `%YAML 1.1`，以下是使用锚点的 `config.yaml` 配置文件示例：
+
+```yaml title="config.yaml"
+%YAML 1.1
+---
+name: MyProject
+version: 0.0.1
+schema: v1
+model_defaults: &model_defaults
+  provider: openai
+  apiKey: my-api-key
+  apiBase: https://api.example.com/llm
+models:
+  - name: mistral
+    <<: *model_defaults
+    model: mistral-7b-instruct
+    roles:
+      - chat
+      - edit
+  - name: qwen2.5-coder-7b-instruct
+    <<: *model_defaults
+    model: qwen2.5-coder-7b-instruct
+    roles:
+      - chat
+      - edit
+  - name: qwen2.5-coder-7b
+    <<: *model_defaults
+    model: qwen2.5-coder-7b
+    useLegacyCompletionsEndpoint: false
+    roles:
+      - autocomplete
+    autocompleteOptions:
+      debounceDelay: 350
+      maxPromptTokens: 1024
+      onlyMyCode: true
+```
+
+---
+
+## `config.json` 弃用
+
+`config.yaml` 替换了已弃用的 `config.json`。查看 **[迁移指南](/reference/yaml-migration)** 以获取从旧格式过渡的帮助。

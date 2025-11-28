@@ -1,0 +1,18 @@
+---
+title: "如何在 Continue 中收集和管理开发数据"
+description: 收集关于您如何构建软件的数据
+keywords: [development data, dev data, LLM-aided development]
+sidebarTitle: "开发数据"
+---
+
+当您使用 Continue 时，您会自动收集关于您如何构建软件的数据。默认情况下，这些开发数据会保存到您本地机器上的 `.continue/dev_data` 目录中。
+
+您可以阅读更多关于开发数据如何作为 LLM 辅助开发的副产品生成，以及为什么我们认为您现在应该开始收集它：[是时候收集关于您如何构建软件的数据了](https://blog.continue.dev/its-time-to-collect-data-on-how-you-build-software)
+
+## 如何配置自定义数据目的地
+
+您还可以为您的数据配置自定义目的地，包括远程 HTTP 端点和本地文件目录。
+
+数据目的地应直接在您的 `config.yaml` 文件的 `data` 部分中配置。有关添加 `data` 配置的更多详细信息，请参阅 [YAML 规范](/reference#data)。
+
+当将开发数据发送到您自己的 HTTP 端点时，它将以给定的 `schema` 版本接收事件 JSON blob。您可以在 [源代码中](https://github.com/continuedev/continue/tree/main/packages/config-yaml/src/schemas/data) 查看事件名称、架构版本和字段。

@@ -1,0 +1,168 @@
+---
+title: "Snyk 集成"
+description: "通过连接到 Snyk 的 Continue 代理自动检测和修复漏洞"
+---
+
+## 概述
+
+将 Snyk 连接到 Continue Mission Control，使代理能够自动检测、分析和解决安全漏洞。启用 Snyk 后，Continue 可以生成修复漏洞的 PR，分析安全模式，并维护应用程序的安全态势。
+
+<Card title="Snyk 集成可以做什么" icon="shield-check">
+
+  - 自动生成 PR 来修复安全漏洞
+  - 分析依赖风险并建议更新
+  - 监控跨项目的安全态势
+  - 创建包含修复步骤的详细漏洞报告
+  - 跟踪漏洞趋势和合规状态
+
+</Card>
+
+## 设置
+
+<Steps>
+
+  <Step title="导航到集成页面">
+
+    前往您的 [集成设置](https://hub.continue.dev/integrations)。
+
+  </Step>
+
+  <Step title="连接 Snyk">
+
+    点击 Snyk 集成旁边的"连接"。
+
+  </Step>
+
+  <Step title="使用 Snyk 授权">
+
+    点击"Connect with Snyk"按钮授权 Continue Mission Control：
+    
+    - 您将被重定向到 Snyk 的 OAuth 授权页面
+    - 查看并批准请求的权限
+    - 您将自动重定向回 [Snyk 收件箱视图](https://hub.continue.dev/inbox?view=snyk)
+
+  </Step>
+
+  <Step title="验证连接">
+
+    重定向回来后，您将看到：
+    - Snyk 已连接的确认信息
+    - 可用于监控的 Snyk 项目
+    - 任何活跃的漏洞警报
+
+  </Step>
+
+</Steps>
+
+<Info>
+
+  **OAuth 授权**：无需手动配置令牌！只需点击授权按钮，Continue 将安全地处理与 Snyk 的认证流程。
+
+</Info>
+
+## 与 GitHub 集成
+
+将 Snyk 与 GitHub 集成结合使用，实现完整的安全工作流：
+
+<Steps>
+
+  <Step title="连接两个集成">
+
+    在 Mission Control 中启用 Snyk 和 GitHub 集成
+
+  </Step>
+
+  <Step title="创建安全代理">
+
+    构建一个代理，它可以：
+    - 接收 Snyk 漏洞警报
+    - 分析代码库中的安全问题
+    - 创建包含安全修复的 PR
+    - 向 PR 添加安全影响分析
+
+  </Step>
+
+  <Step title="设置自动化安全工作流">
+
+    配置代理在发现新的严重漏洞时自动运行
+
+  </Step>
+
+</Steps>
+
+## 监控代理活动
+
+跟踪您的代理的安全修复性能：
+
+1. **在收件箱中查看**：导航到 [Snyk 视图](https://hub.continue.dev/inbox?view=snyk) 查看所有与 Snyk 相关的代理活动
+2. **检查 Snyk 仪表板**：验证漏洞是否正在得到解决
+3. **审查 PR**：确保生成的修复质量和安全性
+4. **监控指标**：跟踪平均修复时间（MTTR）和修复率
+
+## 故障排除
+
+<Accordion title="OAuth 授权失败">
+
+  **问题**：无法完成 Snyk 授权流程
+
+  **解决方案**：
+  - 确保您在 Snyk 组织中拥有适当的权限
+  - 检查您的组织是否允许 OAuth 集成
+  - 尝试在授权前登出并重新登录 Snyk
+  - 清除浏览器 cookie 并重试
+
+</Accordion>
+
+<Accordion title="项目未显示">
+
+  **问题**：连接后无法看到 Snyk 项目
+
+  **解决方案**：
+  - 验证您在 Snyk 中有权访问项目
+  - 检查项目是否已正确导入 Snyk
+  - 刷新集成连接
+  - 确保 OAuth 范围包含项目访问权限
+
+</Accordion>
+
+<Accordion title="代理无法访问漏洞数据">
+
+  **问题**：代理在尝试获取 Snyk 数据时返回错误
+
+  **解决方案**：
+  - 验证 OAuth 连接仍然有效
+  - 如果令牌已过期，请重新授权
+  - 检查代理是否具有必要的 Snyk 上下文提供程序
+  - 查看代理日志以获取特定错误消息
+
+</Accordion>
+
+<Accordion title="Webhook 未触发">
+
+  **问题**：当发现新漏洞时，代理未运行
+
+  **解决方案**：
+  - 验证 Snyk 集成设置中的 Webhook 配置
+  - 检查 Webhook URL 是否指向 Continue Mission Control
+  - 确保 Webhook 事件包含漏洞检测
+  - 查看 Snyk 中的 Webhook 交付日志
+
+</Accordion>
+
+## 支持与资源
+
+<CardGroup cols={2}>
+
+  <Card title="Snyk MCP 指南" icon="book-open" href="/guides/snyk-mcp-continue-cookbook">
+
+    完整指南，包含安全扫描方案、CI/CD 集成和自动化修复工作流
+
+  </Card>
+
+  <Card title="GitHub 集成" icon="github" href="/mission-control/integrations/github">
+
+    将 Snyk 与 GitHub 结合使用，实现完整的安全自动化
+
+  </Card>
+
+</CardGroup>

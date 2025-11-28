@@ -1,0 +1,104 @@
+---
+title: "配置简介"
+description: "自定义配置选项包括模型、MCP服务器、规则、提示等。"
+sidebarTitle: "配置"
+---
+
+<Info>
+  **新UI更新：Hub现已更名为Mission Control。**
+  如果您在重新设计后返回，现在可以在您的 [Mission Control 设置](https://hub.continue.dev/settings/configs) 中查找和管理配置。
+</Info>
+
+## 什么是配置？
+
+配置是灵活的容器，它们组合多个组件，使用 Continue CLI 或扩展创建强大的 AI 编码体验。单个配置可以包括：
+
+<CardGroup cols={2}>
+
+  <Card title="模型" icon="cube">
+    
+    用于聊天、自动补全、编辑等的大型语言模型
+    
+  </Card>
+  
+  <Card title="MCP服务器" icon="wrench">
+    
+    提供工具和功能的模型上下文协议服务器
+    
+  </Card>
+  
+  <Card title="规则" icon="shield">
+    
+    塑造AI行为和响应的指南
+    
+  </Card>
+  
+  <Card title="提示" icon="message-square">
+    
+    用于常见编码任务的可重用指令
+    
+  </Card>
+
+</CardGroup>
+
+## 配置的工作原理
+
+将配置视为AI辅助的配方。每个配置定义：
+
+- **使用什么模型**来完成不同任务（聊天、自动补全、代码编辑）
+- **通过MCP服务器可用的工具**
+- **AI如何通过规则和指南表现**  
+- **用于常见工作流的预构建提示**
+
+这种灵活性允许您为不同上下文创建专门的设置，例如带有React特定规则和工具的Next.js配置，或具有Python分析功能的数据科学配置。
+
+## 配置权限
+
+创建配置时，您可以设置可见性级别：
+
+- **个人**：只有您可以看到和使用该配置
+- **公开**：任何人都可以发现和使用您的配置
+- **组织**：您组织的成员可以访问该配置
+
+## 使用配置
+
+您可以通过三种主要方式与配置交互：
+
+- **创建**：从头构建新配置或从模板开始
+- **编辑**：通过添加/删除组件修改您现有的配置
+- **修改**：获取他人的配置并根据您的需求自定义
+
+## 入门指南
+
+<Steps>
+
+  <Step title="浏览现有配置">
+    
+    浏览 [Continue Mission Control](https://hub.continue.dev/hub?type=configs) 查看其他人构建的配置
+    
+  </Step>
+  
+  <Step title="将配置添加到您的账户">
+    
+    点击任何您感兴趣的配置上的 "Install Config" (+)
+    
+  </Step>
+  
+  <Step title="根据需要自定义">
+    
+    添加您的API密钥并自定义组件以匹配您的工作流
+    
+  </Step>
+  
+  <Step title="在IDE中使用">
+    
+    从Continue扩展中的下拉菜单选择配置，在CLI中键入 `/config`，或在CLI命令中使用 `--config`
+    
+  </Step>
+
+</Steps>
+
+## 配置格式
+
+所有配置都遵循 [`config.yaml`](/reference) 格式，无论您使用的是Mission Control界面还是本地编辑文件。这确保了Mission Control管理的配置和本地配置之间的一致性。
+

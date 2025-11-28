@@ -1,0 +1,213 @@
+---
+title: "上下文提供程序"
+description: "上下文提供程序允许您键入 '@' 并查看可以作为上下文提供给模型的内容下拉列表。"
+---
+
+上下文提供程序允许您键入 '@' 并查看可以作为上下文提供给模型的内容下拉列表。
+
+![上下文项](/images/customize/images/context-provider-example-0c96ff77286fa970b23dddfdc1fa986a.png)
+
+## 内置上下文提供程序
+
+您可以在配置文件中添加任何内置的上下文提供程序，如下所示：
+
+### `@File`
+
+引用当前工作区中的任何文件。
+
+```yaml config.yaml
+context:
+  - provider: file
+```
+
+### `@Code`
+
+引用整个项目中的特定函数或类。
+
+```yaml config.yaml
+context:
+  - provider: code
+```
+
+### `@Git Diff`
+
+引用您对当前分支所做的所有更改。如果您想总结您所做的工作或在提交前要求对您的工作进行一般审查，这很有用。
+
+```yaml config.yaml
+context:
+  - provider: diff
+```
+
+### `@Current File`
+
+引用当前打开的文件。
+
+```yaml config.yaml
+context:
+  - provider: currentFile
+```
+
+### `@Terminal`
+
+引用您在 IDE 终端中运行的最后一个命令及其输出。
+
+```yaml config.yaml
+context:
+  - provider: terminal
+```
+
+### `@Open`
+
+引用所有打开文件的内容。将 `onlyPinned` 设置为 `true` 以仅引用固定文件。
+
+```yaml config.yaml
+context:
+  - provider: open
+    params:
+      onlyPinned: true
+```
+
+### `@Clipboard`
+
+引用最近的剪贴板项
+
+```yaml config.yaml
+context:
+  - provider: clipboard
+```
+
+### `@Tree`
+
+引用当前工作区的结构。
+
+```yaml config.yaml
+context:
+  - provider: tree
+```
+
+### `@Problems`
+
+获取当前文件中的问题。
+
+```yaml config.yaml
+context:
+  - provider: problems
+```
+
+### `@Debugger`
+
+引用调试器中局部变量的内容。目前仅在 VS Code 中可用。
+
+```yaml config.yaml
+context:
+  - provider: debugger
+    params:
+      stackDepth: 3
+```
+
+使用该线程调用栈的前 _n_ 个级别（默认为 3）。
+
+### `@Repository Map`
+
+引用您的代码库的大纲。默认情况下，签名与文件一起包含在仓库映射中。
+
+`includeSignatures` 参数可以设置为 false 以排除签名。对于大型代码库和/或显著减少上下文大小，这可能是必要的。如果禁用索引，则不会包含签名。
+
+```yaml config.yaml
+context:
+  - provider: repo-map
+    params:
+      includeSignatures: false # 默认 true
+```
+
+提供文件列表以及这些文件中顶级类、函数和方法的调用签名。这有助于模型更好地理解特定代码段与代码库其余部分的关系。
+
+在出现的子菜单中，您可以选择 `Entire codebase`，或指定一个子文件夹来生成仓库映射。
+
+此上下文提供程序的灵感来自 [Aider 的仓库映射](https://aider.chat/2023/10/22/repomap.html)。
+
+### `@Operating System`
+
+引用当前操作系统的架构和平台。
+
+```yaml config.yaml
+context:
+  - provider: os
+```
+
+### `@HTTP`
+
+HttpContextProvider 向配置中传入的 URL 发出 POST 请求。服务器必须返回 200 OK，并带有 ContextItem 对象或 ContextItems 数组。
+
+```yaml config.yaml
+context:
+  - provider: http
+    params:
+      url: "https://api.example.com/v1/users"
+      headers:
+        - Authorization: "Bearer <token>"
+```
+
+接收 URL 应期望接收以下参数：
+
+POST 参数
+
+```json
+{  query: string,  fullInput: string}
+```
+
+响应 200 OK 应该是一个具有以下结构的 JSON 对象：
+
+响应
+
+```
+[  {
+    "name": "",
+    "description": "",
+    "content": ""
+  }]// OR{
+  "name": "",
+  "description": "",
+  "content": ""
+}
+```
+
+### 模型上下文协议
+
+[模型上下文协议](https://modelcontextprotocol.io/introduction) 是 Anthropic 提出的一项标准，用于统一提示词、上下文和工具使用。Continue 通过 MCP 上下文提供程序支持任何 MCP 服务器。阅读他们的 [快速入门](https://modelcontextprotocol.io/quickstart) 以了解如何设置本地服务器，然后像这样设置您的配置：
+
+```yaml config.yaml
+mcpServers:
+  - name: My MCP Server
+    command: uvx
+    args:
+      - mcp-server-sqlite
+      - --db-path
+      - /Users/NAME/test.db
+```
+
+然后，您将能够键入 "@" 并在上下文提供程序下拉列表中看到 "MCP"。
+
+## 已弃用的上下文提供程序
+
+<Note>
+  要提供内置上下文提供程序之外的上下文，我们现在建议使用 [MCP
+  服务器](/customize/mcp-tools)
+</Note>
+
+查看 [已弃用的上下文提供程序](/reference/deprecated-context-providers) 以获取以下文档：
+
+- [`@Codebase`](/reference/deprecated-codebase) - 改用 [代码库感知指南](/guides/codebase-documentation-awareness)
+- [`@Folder`](/reference/deprecated-codebase) - 改用 [代码库感知指南](/guides/codebase-documentation-awareness)
+- [`@Docs`](/reference/deprecated-docs) - 改用 [文档感知指南](/guides/codebase-documentation-awareness)
+- `@Greptile` - 查询 Greptile 索引
+- `@Commits` - 引用 git 提交
+- `@Discord` - 引用 Discord 消息
+- `@Jira` - 引用 Jira 问题
+- `@Gitlab Merge Request` - 引用 GitLab MR
+- `@Google` - Google 搜索结果
+- `@Database` - 数据库架构
+- `@Issue` - GitHub 问题
+- `@Url` - URL 内容
+- `@Search` - 代码库搜索
+- `@Web` - 网络搜索结果

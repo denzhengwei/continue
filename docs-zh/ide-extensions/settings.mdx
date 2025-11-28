@@ -1,0 +1,183 @@
+---
+title: "设置"
+description: "通过 VS Code 简化的设置界面配置 Continue"
+---
+
+
+
+## 快速访问
+
+<CardGroup cols={3}>
+  <Card title="设置图标" icon="gear">
+    点击 Continue 侧边栏中的齿轮图标
+  </Card>
+  <Card title="VS Code 设置" icon="sliders">
+    文件 → 首选项 → 设置 → 扩展 → Continue
+  </Card>
+  <Card title="配置文件" icon="code">
+    直接编辑 `config.yml` 以获取高级选项
+  </Card>
+</CardGroup>
+
+<Tip>
+  使用工具栏按钮快速访问特定设置：- **规则**（铅笔图标）- 自定义编码偏好 - **工具**（扳手图标）- 管理集成 - **模型**（立方体图标）- 配置 AI 提供商
+</Tip>
+<img
+  src="/images/continue-settings-card-layout.png"
+  alt="Continue 设置面板 - 卡片式布局"
+/>
+## 核心设置
+
+<Tabs>
+  <Tab title="界面">
+    <AccordionGroup>
+      <Accordion title="显示选项" icon="display">
+        | 设置 | 描述 |
+        |---------|-------------|
+        | 会话标签 | 管理多个聊天会话 |
+        | 代码换行 | 自动换行长代码行 |
+        | Markdown 显示 | 显示原始 Markdown 与渲染版本 |
+        | 聊天滚动条 | 切换滚动条可见性 |
+      </Accordion>
+      
+      <Accordion title="行为" icon="wand-magic-sparkles">
+        | 设置 | 描述 |
+        |---------|-------------|
+        | 自动接受差异 | 自动应用代码更改 |
+        | 工具拒绝 | 工具被拒绝后继续 |
+        | 自动命名 | 自动生成会话标题 |
+      </Accordion>
+    </AccordionGroup>
+  </Tab>
+
+  <Tab title="自动补全">
+    配置代码补全：
+
+    <img
+      src="/images/autocomplete-settings.png"
+      alt="Continue 自动补全设置"
+    />
+
+    <Note>
+      需要将自动补全模型添加到您的配置中，才能选择自动补全模型。如果没有可用模型，您将被链接到显示推荐模型的文档。请查看我们的 [模型推荐](/customize/model-roles/autocomplete) 以获取最佳自动补全模型。
+    </Note>
+
+    <img
+      src="/images/autocomplete-model-selection.png"
+      alt="自动补全模型选择"
+    />
+
+    <Info>
+      要更好地了解如何设置配置和模型，请查看我们的 [理解配置指南](/guides/understanding-configs)。
+    </Info>
+
+  </Tab>
+
+  <Tab title="索引">
+    控制 Continue 如何理解您的代码库：
+
+    <img
+      src="/images/indexing-settings.png"
+      alt="Continue 索引设置"
+    />
+
+    <Steps>
+      <Step title="启用索引">
+        在设置面板中切换代码库索引
+      </Step>
+      <Step title="监控进度">
+        在 UI 中查看实时状态
+      </Step>
+      <Step title="验证覆盖范围">
+        通过状态指示器检查哪些文件已被索引
+      </Step>
+    </Steps>
+
+    <Note>
+      索引使 Continue 能够理解您的整个代码库结构，显著提高上下文感知和建议质量。
+    </Note>
+
+  </Tab>
+
+    <Tab title="实验性">
+    <Warning>
+      这些功能处于测试阶段，可能会更改或存在稳定性问题。
+    </Warning>
+
+    | 功能 | 目的 |
+    |---------|---------|  
+    | 默认添加当前文件 | 当前打开的文件会作为上下文添加到每个新对话中 |
+    | 启用实验性工具 | 启用对仍在开发中的实验性工具的访问 |
+    | 仅使用系统消息工具 | Continue 不会尝试使用原生工具调用，只会使用系统消息工具 |
+    | @Codebase: 仅使用工具调用 | @codebase 上下文提供程序将仅使用工具调用进行代码检索 |
+    | 工具拒绝后继续流式传输 | 工具调用被拒绝后，流式传输将继续 |
+
+  </Tab>
+</Tabs>
+
+## 模型和助手选择
+
+<img
+  src="/images/assistant-selector-dropdown.png"
+  alt="新的助手下拉菜单，带有更清晰的图标和改进的组织显示"
+/>
+
+改进后的助手选择器具有以下功能：
+
+- **组织徽章**，便于识别提供商
+- **智能错误处理**，对有问题的配置进行排序，同时保持其可选性
+- **键盘导航**，用于快速切换模型
+
+## 隐私和数据
+
+<CardGroup cols={3}>
+  <Card title="本地处理" icon="lock">
+    所有代码分析都在本地进行，除非明确共享
+  </Card>
+  <Card title="遥测控制" icon="chart-line">
+    选择加入/退出匿名使用统计
+  </Card>
+  <Card title="会话管理" icon="database">
+    会话会自动保存并在 IDE 重启之间恢复
+  </Card>
+</CardGroup>
+
+## 故障排除
+
+<AccordionGroup>
+  <Accordion title="模型连接问题" icon="plug">
+    - 验证 `config.yml` 中的 API 密钥 - 检查网络连接 - 确认端点 URL 正确
+  </Accordion>
+
+<Accordion title="工具加载失败" icon="wrench">
+  - 检查 MCP 服务器配置 - 检查工具权限 - 验证工具依赖项已安装
+</Accordion>
+
+    <Accordion title="索引问题" icon="magnifying-glass">
+    - 检查文件权限
+    - 查看 `.gitignore` 模式
+    - 验证有足够的磁盘空间
+
+  </Accordion>
+</AccordionGroup>
+
+<Info>
+  仍然有问题？查看我们全面的 [故障排除指南](/troubleshooting) 或访问 [常见问题](/faqs) 获取更多解决方案。
+</Info>
+
+## 下一步
+
+<CardGroup cols={2}>
+  <Card title="配置模型" icon="robot" href="/customize/models">
+    设置您的 AI 提供商
+  </Card>
+  <Card title="添加工具" icon="wrench" href="/customize/mcp-tools">
+    使用 MCP 工具扩展 Continue
+  </Card>
+  <Card title="自定义规则" icon="pencil" href="/customize/rules">
+    定义编码偏好
+  </Card>
+  <Card title="提示词" icon="message" href="/customize/prompts">
+    自定义 AI 行为
+  </Card>
+</CardGroup>

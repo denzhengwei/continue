@@ -1,0 +1,42 @@
+---
+title: "规则"
+description: "规则允许您提供特定的指令，指导AI代理在处理您的代码时的行为。您可以明确定义指导原则，确保AI提供一致、上下文适当的响应，而不是让AI对您的编码标准、架构模式或项目特定要求做出假设。"
+---
+
+将这些视为您的AI编码代理的护栏：
+
+- **强制执行公司特定的编码标准**和安全实践
+- **实施符合您工程文化的质量检查**
+- **创建铺平的道路**，让开发者遵循组织最佳实践
+
+通过实施规则，您可以将AI从一个通用的编码代理转变为一个了解您项目独特需求和约束的知识渊博的团队成员。
+
+## 规则如何工作
+
+您的代理会检测规则，并在[代理](/ide-extensions/agent/quick-start)、[聊天](/ide-extensions/chat/quick-start)和[编辑](/ide-extensions/edit/quick-start)模式下应用指定的规则。
+
+## 在哪里管理规则
+
+<Columns cols={2}>
+<Card title="本地规则 (.continue/rules)" icon="folder">
+- 在 `.continue/rules` 文件夹中创建文件
+- 与 Hub 配置自动显示
+- 直接在文件系统中编辑
+- 与代码一起进行版本控制
+- 最适合项目特定规则（例如，"修改数据库后记得生成迁移"）
+</Card>
+
+<Card title="Hub 规则" icon="cloud">
+- 在 [Continue Mission Control](https://hub.continue.dev) 上管理
+- 在 config.yaml 中使用 `uses:` 引用
+- 与团队和社区共享
+- 易于包含在多个代理中
+- 最适合组织范围的规则（例如，"始终使用 X 库执行 Y 任务"）
+</Card>
+</Columns>
+
+<Info>
+**快速设置**：先使用本地规则立即使用，然后将常用规则推广到 Hub 以进行共享和重用。
+</Info>
+
+在[规则深入探讨](/customize/deep-dives/rules)中了解更多信息，并在 YAML 参考中查看 [`rules`](/reference#rules) 以获取更多详细信息。

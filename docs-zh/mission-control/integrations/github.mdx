@@ -1,0 +1,207 @@
+---
+title: "GitHub 集成"
+description: "连接到 GitHub，允许 Continue 代理读取和创建您仓库上的 PR"
+---
+
+## 概述
+
+将您的 GitHub 账户连接到 Continue Mission Control，使代理能够与您的仓库交互。连接后，代理可以读取代码、创建拉取请求、管理问题并自动化您的开发工作流。
+
+<Card title="GitHub 集成可以做什么" icon="github">
+
+  - 从代理任务自动创建拉取请求
+  - 读取和分析仓库代码和问题
+  - 管理项目工作流和里程碑
+  - 自动化代码审查和质量检查
+  - 生成发布说明和文档
+
+</Card>
+
+
+## 设置
+
+<Steps>
+
+  <Step title="导航到集成">
+
+    前往您的 [集成设置](https://hub.continue.dev/integrations)。
+
+  </Step>
+
+  <Step title="连接 GitHub">
+
+    点击 GitHub 旁边的 "Connect"，并在您的 GitHub 账户中授权 Continue 应用。
+
+  </Step>
+
+  <Step title="选择仓库访问权限">
+
+    选择是授予对所有仓库的访问权限还是选择特定仓库。您可以稍后在 GitHub 设置中随时修改此设置。
+
+  </Step>
+
+  <Step title="确认权限">
+
+    查看并批准请求的权限。Continue 需要这些权限才能代表您执行自动化任务。
+
+  </Step>
+
+</Steps>
+
+## 使用案例
+
+### 自动问题解决
+
+创建自动修复错误并打开 PR 的代理：
+
+<Card title="错误修复代理" icon="bug">
+
+  **任务示例**："审查标记为 'bug' 的问题，并为任何简单的问题创建 PR 进行修复"
+
+  **代理的工作**：
+  - 扫描您的仓库中带有 "bug" 标签的问题
+  - 分析错误描述并重现问题
+  - 生成修复并创建拉取请求
+  - 添加指向原始问题的链接
+
+  **在 Mission Control 中运行**：创建为计划自动化或手动触发
+
+</Card>
+
+### 拉取请求管理
+
+自动化代码审查和 PR 维护：
+
+<Card title="PR 审查代理" icon="code-pull-request">
+
+  **任务示例**："审查打开的 PR，检查代码质量、安全问题和最佳实践"
+
+  **代理的工作**：
+  - 分析打开的拉取请求中的代码更改
+  - 识别潜在的错误、安全漏洞或样式问题
+  - 添加带有建议的审查评论
+  - 批准符合质量标准的 PR
+
+  **在 Mission Control 中运行**：设置为在新 PR 上触发的自动化
+
+</Card>
+
+### 文档生成
+
+自动保持文档更新：
+
+<Card title="文档更新代理" icon="book">
+
+  **任务示例**："根据最近的代码更改更新 README 和 API 文档"
+
+  **代理的工作**：
+  - 检测对公共 API 或功能的更改
+  - 生成更新的文档
+  - 创建带有文档更新的 PR
+  - 将文档链接到相关的代码更改
+
+  **在 Mission Control 中运行**：安排在发布或主要合并后运行
+
+</Card>
+
+### 项目管理
+
+自动化问题分类和项目组织：
+
+<Card title="问题分类代理" icon="list-check">
+
+  **任务示例**："通过添加标签、分配给适当的团队成员并链接相关问题来分类新问题"
+
+  **代理的工作**：
+  - 分析新问题描述
+  - 应用相关标签（bug、feature、documentation 等）
+  - 根据专业知识建议分配的团队成员
+  - 识别并链接相关问题或 PR
+
+  **在 Mission Control 中运行**：创建为在新问题上触发的自动化
+
+</Card>
+
+### 发布管理
+
+自动化您的发布过程：
+
+<Card title="发布说明生成器" icon="rocket">
+
+  **任务示例**："从上次发布以来合并的 PR 生成发布说明，并创建草稿发布"
+
+  **代理的工作**：
+  - 收集自上次标签以来所有合并的 PR
+  - 对更改进行分类（功能、修复、破坏性更改）
+  - 生成格式化的发布说明
+  - 创建草稿 GitHub 发布以供审查
+
+  **在 Mission Control 中运行**：在发布前手动或按计划触发
+
+</Card>
+
+### 代码质量监控
+
+在整个代码库中维护代码标准：
+
+<Card title="代码质量代理" icon="shield-check">
+
+  **任务示例**："扫描代码库中已弃用的 API 使用情况，并创建带有迁移指南的问题"
+
+  **代理的工作**：
+  - 识别已弃用函数或库的使用情况
+  - 生成迁移建议
+  - 为每个已弃用的使用创建单独的问题
+  - 提供升级路径的代码示例
+
+  **在 Mission Control 中运行**：每月或在依赖更新后安排运行
+
+</Card>
+
+## 在 Mission Control 中运行 GitHub 代理
+
+您可以通过两种方式运行连接到 GitHub 的代理：
+
+### 1. 手动任务
+
+按需触发代理执行特定任务：
+
+1. 前往 [Mission Control Agents](https://hub.continue.dev/agents)
+2. 选择或创建启用 GitHub 的代理
+3. 点击 "Run Agent" 并提供您的任务描述
+4. 实时监控进度并审查结果
+
+### 2. 自动化工作流
+
+设置代理自动运行：
+
+- **计划的**：每天、每周或按自定义计划运行
+- **触发的**：当特定事件发生时执行（新问题、PR 打开等）
+- **Webhook**：与外部服务集成以触发代理
+
+<Tip>
+
+  从手动任务开始测试您的代理行为，然后在您对结果有信心后将成功的工作流转换为自动化。
+
+</Tip>
+
+
+## 支持与资源
+
+<CardGroup cols={2}>
+
+  <Card title="GitHub MCP 食谱" icon="book-open" href="/guides/github-mcp-continue-cookbook">
+
+    将 GitHub 与 Continue 代理结合使用的综合指南
+
+  </Card>
+
+  <Card title="GitHub PR 审查机器人" icon="robot" href="/guides/github-pr-review-bot">
+
+    使用 Continue 自动化代码审查
+
+  </Card>
+
+</CardGroup>
+
+

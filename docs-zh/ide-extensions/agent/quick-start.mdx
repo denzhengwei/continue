@@ -1,0 +1,82 @@
+---
+title: "快速入门"
+description: "开始使用 Continue 的 Agent 模式，通过基于自然语言指令修改代码库的 AI 驱动工具自动实现代码更改、修复错误和运行命令"
+---
+
+Agent 模式为聊天模型配备了处理各种编码任务所需的工具，允许模型做出决策，为您节省手动查找上下文和执行操作的工作。
+
+<Accordion title="了解如何选择正确的模式" icon="lightbulb">
+  <Columns cols={3}>
+    <Card title="聊天模式" icon="comments">
+      *学习和讨论而不修改代码。*
+
+      **心理模型：** 与知识渊博的同事交谈
+
+      **最适合：** 解释概念、比较方法、代码审查讨论。
+
+    </Card>
+
+    <Card title="计划模式" icon="binoculars">
+        *使用只读工具安全地探索和计划。*
+
+      **心理模型：** 建筑师在翻新前进行勘测
+
+      **最适合：** 理解代码库、调查错误、规划实现。
+
+    </Card>
+
+    <Card title="代理模式" icon="hammer">
+    *使用完整的工具访问权限进行实际更改。*
+
+      **心理模型：** 承包商执行已批准的蓝图
+
+      **最适合：** 实现功能、修复错误、运行测试和命令。
+
+    </Card>
+
+  </Columns>  
+</Accordion>
+
+### 如何使用代理模式
+
+您可以在聊天输入框下方的模式选择器中切换到 `Agent`。模式选择器提供三个选项：
+
+- **聊天模式**：无工具可用，纯对话
+- **计划模式**：只读工具，用于安全探索和规划
+- **代理模式**：所有工具可用，用于进行更改
+
+![如何选择代理模式](/images/mode-select-agent.png)
+
+<Info>
+  如果代理模式或计划模式显示 "Not Supported" 消息而被禁用，这意味着所选模型或提供商不支持工具，或者 Continue 尚未支持与其一起使用工具。有关更多信息，请参阅 [模型块](/customize/models)。
+</Info>
+
+<Tip>
+  使用键盘快捷键 `Cmd/Ctrl + .` 在模式之间快速切换。
+</Tip>
+
+### 如何与代理模式聊天
+
+代理模式与 [聊天](/ide-extensions/chat/how-it-works) 模式位于同一界面中，因此使用相同的 [输入](/ide-extensions/chat/quick-start#how-to-start-a-conversation) 发送消息，您仍然可以使用相同的手动方法提供上下文，例如 [`@` 上下文提供程序](/ide-extensions/chat/quick-start#how-to-use--for-additional-context) 或添加 [来自编辑器的高亮代码](/ide-extensions/chat/quick-start#how-to-include-code-context)。
+
+#### 如何在代理模式中使用自然语言
+
+使用代理模式，您可以提供自然语言指令，让模型完成工作。例如，您可以说
+
+> 将 @typescript-eslint/naming-convention 规则在该项目的所有 eslint 配置中设置为 "off"
+
+代理模式将决定使用哪些工具来完成工作。
+
+## 如何授予代理模式权限
+
+默认情况下，代理模式在想要使用工具时会请求权限。点击 `Continue` 允许代理模式继续执行工具调用，或点击 `Cancel` 拒绝。
+
+![代理请求权限](/images/ide-extensions/agent/images/agent-permission-c150919a5c43eb4f55d9d4a46ef8b2d6.png)
+
+您可以使用工具策略来排除特定工具或使特定工具的使用自动化。有关更多背景信息，请参阅 [MCP 工具](/customize/mcp-tools)。
+
+## 如何查看工具响应
+
+从工具调用返回的任何数据都会自动作为上下文项反馈给模型。大多数错误也会被捕获并返回，以便代理模式可以决定如何继续。
+
+![代理响应](/images/ide-extensions/agent/images/agent-response-c7287c82aac93fb4376f9d85b352b2d7.png)

@@ -1,0 +1,336 @@
+---
+title: "为 Continue 文档做贡献"
+sidebarTitle: "文档贡献"
+description: "欢迎来到 Continue 文档！我们很高兴您想要做出贡献。本指南将帮助您开始使用我们的文档工作流和工具。"
+---
+
+## 🚀 快速开始
+
+### 前提条件
+
+1. **Node.js**（v20 或更高版本）
+2. **Git** 用于版本控制
+3. **GitHub CLI** - 从 [cli.github.com](https://cli.github.com/) 安装
+
+### 设置步骤
+
+1. **Fork 并克隆仓库**
+
+   ```bash
+   # Fork 仓库（这也会将其克隆到本地）
+   gh repo fork continuedev/continue
+   cd continue/docs
+   ```
+
+2. **安装依赖**
+
+   ```bash
+   npm install
+   ```
+
+3. **启动本地开发服务器**
+   ```bash
+   npm run dev
+   ```
+   您的文档将在 `http://localhost:3000` 可用
+
+## 💬 创建讨论和问题
+
+在创建任何问题之前，我们要求您先从 GitHub Discussion 开始。这有助于我们组织反馈并确定最佳前进道路。
+
+### 开始讨论
+
+<Steps>
+  <Step title="前往 GitHub Discussions">
+    访问 [Continue GitHub
+    Discussions](https://github.com/continuedev/continue/discussions) 页面。
+  </Step>
+
+  <Step title="选择正确的类别">
+    选择 **Docs** 类别用于文档改进、更正或建议。
+  </Step>
+
+  <Step title="提供详细信息">
+    在您的讨论中包含以下内容： - 问题或建议的清晰描述 - 重现步骤（如果适用） -
+    预期行为与实际行为 - 有帮助时提供截图或代码示例 -
+    您的环境（操作系统、IDE、Continue 版本）
+  </Step>
+</Steps>
+
+### 问题升级流程
+
+<Info>
+  **重要提示**：所有问题都应从讨论开始。Continue
+  团队将决定是否以及何时将讨论升级为 GitHub 问题。
+</Info>
+
+Continue 团队将审查讨论，并可能：
+
+- 直接在讨论中提供解决方案或澄清
+- 请求更多信息或测试
+- 如果需要代码更改或确认是错误，则将讨论转换为问题
+- 如果已解决或无法采取行动，则关闭讨论
+
+## 🤖 使用 Continue 的 AI 驱动文档
+
+我们强烈鼓励使用 Continue 的 AI 辅助来保持文档的一致性和质量。以下是三种设置方法：
+
+### 选项 1：使用预构建的文档代理（推荐）
+
+最简单的开始方式是使用我们预配置的文档代理：
+
+<Steps>
+  <Step title="从 Continue Mission Control 安装代理">
+    访问 [Docs Assistant - Mintlify in Mission Control](https://hub.continue.dev/continuedev/docs-mintlify) 并点击 "Install" 将其添加到您的 Continue 设置中。此代理预先配置了我们所有的文档标准。
+
+    <Info>
+    在我们的 [配置文档](/guides/understanding-configs) 中了解有关 Continue 配置的更多信息。
+    </Info>
+  </Step>
+  
+  <Step title="使用代理">
+    <Tabs>
+      <Tab title="命令行">
+        ```bash
+        # 如果您尚未安装 Continue CLI
+        npm install -g @continuedev/cli
+        
+        # 从命令行使用代理
+        cn "为使用 Continue CLI 与 Linear 创建新指南" --config continuedev/docs-mintlify
+        ```
+      </Tab>
+      
+      <Tab title="IDE">
+        1. 在您的 IDE 中打开 Continue
+        2. 从模型下拉菜单中选择 "Docs Assistant - Mintlify" 代理
+        3. 要求它帮助您创建或编辑文档
+        
+        示例提示词：
+        - "为使用 Continue CLI 与 Linear 创建新指南"
+        - "使用新的安装过程更新入门指南"
+        - "根据 Mintlify 标准格式化此文档"
+      </Tab>
+    </Tabs>
+  </Step>
+</Steps>
+
+<Tip>
+  您也可以重新混合此配置以根据您的特定需求进行自定义。在我们的 [重新混合配置文档](/hub/configs/create-a-config#how-to-remix-a-config) 中了解如何创建自己的重新混合。
+</Tip>
+
+### 选项 2：创建您自己的自定义代理
+
+如果您想要更多控制或自定义，您可以创建自己的文档代理：
+
+<Steps>
+      <Step title="创建新配置">
+          按照我们的 [配置创建指南](/hub/configs/create-a-config) 设置您自己的配置。
+  </Step>
+  
+  <Step title="添加 Continue Docs MCP">
+    从 Continue Mission Control 安装：https://hub.continue.dev/continuedev/continue-docs-mcp
+    
+    此 MCP 提供有关 Continue 文档结构和标准的上下文。
+  </Step>
+  
+  <Step title="添加 Mintlify 格式化规则">
+    从 Continue Mission Control 安装：https://hub.continue.dev/mintlify/technical-writing-rule
+    
+    此规则确保正确的 Mintlify 组件格式化。
+  </Step>
+  
+  <Step title="使用您的自定义代理">
+    <Tabs>
+      <Tab title="命令行">
+        ```bash
+        # 如果您尚未安装 Continue CLI
+        npm install -g @continuedev/cli
+        
+        # 从命令行使用您的代理
+        cn --config your-org/your-agent-name "为 API 身份验证创建新指南"
+        ```
+      </Tab>
+      
+      <Tab title="IDE">
+        1. 在您的 IDE 中打开 Continue
+        2. 从模型下拉菜单中选择您的自定义代理
+        3. 要求它帮助您创建或编辑文档
+        
+        示例提示词：
+        - "帮助我根据 Mintlify 标准格式化此文档"
+        - "为此功能创建故障排除部分"
+      </Tab>
+    </Tabs>
+  </Step>
+</Steps>
+
+## 📝 文档标准
+
+### Mintlify 组件指南
+
+使用 Mintlify 组件时，请遵循以下格式化规则：
+
+#### 卡片和信息框
+
+```mdx
+<Card title="最佳实践" icon="lightbulb">
+
+始终包含空行和适当的缩进：
+
+- 使用 2 空格缩进
+- 在开始标签后添加空行
+- 将列表格式化为项目符号点
+
+</Card>
+```
+
+#### 警告和注意组件
+
+```mdx
+<Warning>
+
+重要信息应清晰格式化：
+
+- 每个点单独一行
+- 一致的缩进
+- 清晰、简洁的语言
+
+</Warning>
+```
+
+### 写作风格
+
+1. **简洁**：快速切入主题
+2. **使用示例**：展示，而不仅仅是讲述
+3. **包含代码块**：提供可工作的示例
+4. **添加视觉效果**：截图和图表有助于理解
+5. **测试您的更改**：确保所有链接和代码示例都能正常工作
+
+<Warning>
+如果您正在创建新指南，请自己测试步骤以确保准确性。
+</Warning>
+
+## 🔧 常见任务
+
+### 添加新指南
+
+1. 在 guides 目录中创建一个新的 `.mdx` 文件
+2. 添加前置元数据：
+   ```mdx
+   ---
+   title: "您的指南标题"
+   description: "本指南涵盖内容的简要描述"
+   ---
+   ```
+3. 使用 Continue 代理帮助格式化您的内容
+4. 更新 `docs.json` 以将您的新页面包含在导航中
+
+<Tip>
+我们有指南和食谱。使用指南进行分步说明，使用食谱为 CLI 创建代理。
+</Tip>
+
+### 更新现有文档
+
+1. 使用 Continue 代理，提示词如：
+   - "使用新的 npm 包更新安装指南"
+   - "添加连接问题的故障排除部分"
+2. 代理将自动保持一致的格式
+
+### 添加代码示例
+
+使用特定语言的代码块：
+
+````mdx
+```typescript
+// 您的 TypeScript 代码在这里
+const example = "Hello, Continue!";
+```
+````
+
+## 🐛 测试您的更改
+
+1. **本地预览**：在 docs 目录中，运行 `npm run dev` 并检查您的更改
+2. **链接验证**：确保所有内部和外部链接都能正常工作
+3. **格式检查**：使用 Continue 代理验证 Mintlify 格式
+4. **构建测试**：运行 `npm run build` 以确保没有构建错误
+
+## 📤 提交您的贡献
+
+1. **创建功能分支**
+
+   ```bash
+   git checkout -b docs/your-feature-name
+   ```
+
+2. **提交您的更改**
+
+   ```bash
+   git add .
+   git commit -m "docs: 描述您的更改"
+   ```
+
+3. **推送并创建 Pull Request**
+
+   ```bash
+   # 推送到您的 fork 并创建 PR
+   git push origin docs/your-feature-name
+   gh pr create --web
+   ```
+
+<Tip>
+
+  `gh pr create` 命令将自动：
+  - 将您的分支推送到您的 fork
+  - 向主仓库创建拉取请求
+  - 允许您添加标题、描述和引用问题
+  - 如果使用 `--web`，则在浏览器中打开 PR
+
+</Tip>
+
+### 将您的 PR 链接到问题
+
+<Info>
+
+**重要提示**：当您的 PR 解决特定问题时，请使用 GitHub 关键词链接它。
+
+</Info>
+
+要自动将您的 PR 链接到问题并在 PR 合并时关闭它，请在 PR 描述中使用以下关键词之一：
+
+- `closes #issue_number`
+- `fixes #issue_number`
+- `resolves #issue_number`
+
+**示例 PR 描述：**
+```markdown
+改进了安装指南，为 Windows 用户提供了更清晰的步骤。
+
+Closes #1234
+```
+
+这有助于我们跟踪正在处理的问题，并在您的 PR 合并时自动关闭它们。
+
+<Tip>
+
+在 [GitHub 文档](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/using-keywords-in-issues-and-pull-requests) 中了解有关将 PR 链接到问题的更多信息。
+
+</Tip>
+
+## 💡 成功提示
+
+- **使用 Continue 代理**：它了解我们的文档标准，将为您节省时间
+- **经常预览**：在本地开发服务器中检查您的更改
+- **提问**：如果您需要澄清，请打开问题或讨论
+- **小 PR 更好**：每个 PR 专注于一个主题或修复
+- **更新示例**：确保代码示例反映最新的 API
+
+
+## 🆘 获取帮助
+
+- **开始讨论**：使用 [GitHub Discussions](https://github.com/continuedev/continue/discussions) 处理文档问题、建议或问题
+- **Continue 代理问题**：查看 [Continue Mission Control 页面](https://hub.continue.dev/continuedev/docs-mintlify)
+- **Discord 社区**：加入我们的 Discord 获取实时帮助
+- **现有文档**：查看类似页面获取格式化示例
+---
+
+感谢您为 Continue 做出贡献！您的努力帮助我们的文档变得更好，造福所有人。要了解有关为项目其他部分做出贡献的更多信息，请查看我们的 [主要 CONTRIBUTING 指南](https://github.com/continuedev/continue/blob/main/CONTRIBUTING.md) 🎉

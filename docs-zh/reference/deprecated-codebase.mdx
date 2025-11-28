@@ -1,0 +1,114 @@
+---
+title: "@Codebase（已弃用）"
+description: 已弃用的代码库上下文提供程序 - 请改用新的代码库感知方法
+keywords: [deprecated, codebase, embeddings, context, legacy]
+noindex: true
+---
+
+<Warning>
+  **此功能已弃用。** `@Codebase` 上下文提供程序已被弃用，取而代之的是更集成的代码库感知方法。请参阅我们的 [使代理模式感知代码库和文档指南](/guides/codebase-documentation-awareness) 以获取推荐方法。
+</Warning>
+
+## 迁移指南
+
+如果您当前正在使用 `@Codebase` 或 `@Folder` 上下文提供程序，请迁移到我们的 [代码库和文档感知指南](/guides/codebase-documentation-awareness) 中概述的新方法。新方法提供：
+
+- 与 Continue 代理模式功能更好的集成
+- 更智能的上下文选择
+- 改进的性能和准确性
+
+## 遗留文档
+
+*以下是 `@Codebase` 上下文提供程序的原始文档，保留供参考*
+
+Continue 会为您的代码库建立索引，以便稍后可以自动从整个工作区中提取最相关的上下文。这是通过基于嵌入的检索和关键字搜索的组合来完成的。默认情况下，所有嵌入都使用 `transformers.js` 在本地计算，并存储在本地的 `~/.continue/index` 中。
+
+<Info>
+  **注意：** `transformers.js` 不能在 JetBrains IDE 中使用。但是，您可以从 [此处的列表](../customize/model-roles/embeddings) 中选择不同的嵌入模型。
+</Info>
+
+## 如何使用 @Codebase 和 @Folder 上下文提供程序
+
+目前，代码库检索功能以 "codebase" 和 "folder" 上下文提供程序的形式提供。您可以通过在输入框中键入 `@Codebase` 或 `@Folder`，然后提问来使用它们。输入框的内容将与代码库（或文件夹）其余部分的嵌入进行比较，以确定相关文件。
+
+### @Codebase 上下文提供程序何时有用
+
+以下是一些它可能有用的常见用例：
+
+- **询问有关代码库的高级问题**
+  - "如何向服务器添加新端点？"
+  - "我们在任何地方使用 VS Code 的 CodeLens 功能吗？"
+  - "是否已有将 HTML 转换为 markdown 的代码？"
+- **使用现有样本作为参考生成代码**
+  - "生成一个带有日期选择器的新 React 组件，使用与现有组件相同的模式"
+  - "使用 Python 的 argparse 为这个项目编写一个 CLI 应用程序草稿"
+  - "在 `bar` 类中实现 `foo` 方法，遵循 `baz` 其他子类中看到的模式。
+- **使用 `@Folder` 询问有关特定文件夹的问题，增加相关结果的可能性**
+  - "这个文件夹的主要用途是什么？"
+  - "我们如何使用 VS Code 的 CodeLens API？"
+  - 或者上述任何示例，但使用 `@Folder` 代替 `@Codebase`
+
+### @Codebase 上下文提供程序何时无用
+
+以下是它无用的用例：
+
+- **当您需要 LLM 查看代码库中的 _每一个_ 文件时**
+  - "找出 `foo` 函数被调用的所有地方"
+  - "审查我们的代码库并找出任何拼写错误"
+- **重构任务**
+  - "向 `bar` 函数添加新参数并更新用法"
+
+## 如何配置 @Codebase 上下文提供程序设置
+
+有几个选项可以让您配置 `@codebase` 上下文提供程序的行为，这些选项对于 `@folder` 上下文提供程序也是相同的：
+
+<Tabs>
+  <Tab title="YAML">
+  ```yaml title="config.yaml" 
+  context:
+    - provider: codebase
+      params:
+        nRetrieve: 25
+        nFinal: 5
+        useReranking: true
+  ```
+  </Tab>
+  <Tab title="JSON">
+  ```json title="config.json"
+  {
+    "contextProviders": [
+      {
+        "name": "codebase",
+        "params": {
+          "nRetrieve": 25,
+          "nFinal": 5,
+          "useReranking": true
+        }
+      }
+    ]
+  }
+  ```
+  </Tab>
+</Tabs>
+
+### `nRetrieve`
+
+从向量数据库初始检索的结果数量（默认值：25）
+
+### `nFinal`
+
+重新排序后使用的最终结果数量（默认值：5）
+
+### `useReranking`
+
+是否使用重新排序，这将允许初始选择 `nRetrieve` 个结果，然后使用 LLM 选择前 `nFinal` 个结果（默认值：true）
+
+## 如何在索引过程中忽略文件
+
+Continue 会尊重 `.gitignore` 文件，以确定哪些文件不应被索引。如果您想排除其他文件，可以将它们添加到 `.continueignore` 文件中，该文件遵循与 `.gitignore` 完全相同的规则。
+
+Continue 还支持一个**全局** `.continueignore` 文件，该文件将对所有工作区生效，可以在 `~/.continue/.continueignore` 创建。
+
+如果您想查看 Continue 已索引的确切文件，元数据存储在 `~/.continue/index/index.sqlite` 中。您可以使用 [DB Browser for SQLite](https://sqlitebrowser.org/) 等工具查看此文件中的 `tag_catalog` 表。
+
+如果您需要强制刷新索引，请使用 <kbd>cmd/ctrl</kbd> + <kbd>shift</kbd> + <kbd>p</kbd> + "Reload Window" 重新加载 VS Code 窗口。

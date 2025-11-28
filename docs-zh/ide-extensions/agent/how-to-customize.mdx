@@ -1,0 +1,48 @@
+---
+title: "如何自定义代理模式"
+description: "了解如何自定义 Continue 中的代理模式，使其更适合您的工作流和编码风格。"
+sidebarTitle: "自定义代理模式"
+---
+
+## 如何添加规则块
+
+可以在本地配置或 Mission Control 中添加规则。您可以在 Continue Mission Control 上探索规则，并参考 [规则深入](/customize/deep-dives/rules) 获取更多详细信息。
+
+## 如何自定义系统消息
+
+您可以使用模型级配置自定义聊天、代理和计划模式的系统消息：
+
+```yaml
+models:
+  - name: GPT-4o
+    provider: openai
+    model: gpt-4o
+    chatOptions:
+      baseSystemMessage: "You are a helpful coding agent."
+      baseAgentSystemMessage: "You are a systematic coding agent. Break down problems methodically."
+      basePlanSystemMessage: "You are a planning agent. Create clear, actionable steps."
+```
+
+## 如何添加 MCP 工具
+
+您可以将 MCP 服务器添加到您的配置中，为代理模式提供对更多工具的访问。探索 [Mission Control 上的 MCP 服务器](https://hub.continue.dev/hub?type=mcpServers)，并参考 [MCP 指南](/customize/deep-dives/mcp) 获取更多详细信息。
+
+## 如何配置工具策略
+
+您可以将代理模式的工具使用行为调整为三个选项：
+
+- **先询问（默认）**：使用 "取消" 和 "继续" 按钮请求用户权限
+- **自动**：自动调用工具，不请求权限
+- **排除**：不向模型发送该工具
+
+:::warning
+如果工具行为不是只读的，请谨慎将工具设置为 "自动"。
+:::
+
+要管理工具策略：
+
+1. 点击输入工具栏中的工具图标
+2. 通过点击策略文本查看和更改策略
+3. 您还可以切换工具组的开启/关闭
+
+工具策略按用户本地存储。

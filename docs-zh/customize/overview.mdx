@@ -1,0 +1,73 @@
+---
+title: "自定义概述"
+description: "了解如何使用模型提供商、规则、提示词和工具自定义 Continue"
+---
+
+Continue 可以深度自定义，以适应您特定的开发工作流和偏好。本指南涵盖了您可以自定义 Continue 以增强编码体验的主要方式。
+
+## 更改您的模型提供商
+
+Continue 允许您选择自己喜欢的模型提供商，甚至添加多个模型提供商。这使您可以为不同的任务使用不同的模型，或者如果您对当前模型的结果不满意，可以尝试另一个模型。Continue 支持所有流行的模型提供商，包括 OpenAI、Anthropic、Microsoft/Azure、Mistral 等。如果您愿意，您甚至可以自托管自己的模型提供商。
+
+[了解更多关于模型提供商的信息 →](/customize/model-providers/overview)
+
+## 为特定任务选择不同的模型
+
+Continue 的不同功能可以使用不同的模型。我们称这些为 _模型角色_。例如，您可以为聊天模式使用与自动补全不同的模型。
+
+[了解更多关于模型角色的信息 →](/customize/model-roles)
+
+## 创建自定义提示词
+
+创建自定义斜杠命令和提示词模板，以简化您的工作流。
+
+[了解更多关于提示词的信息 →](/customize/prompts)
+
+## 配置规则
+
+设置规则来指导 AI 响应，并确保在您的代码库中保持一致的行为。
+
+[了解更多关于规则的信息 →](/customize/rules)
+
+## 调用外部工具和函数
+
+使用 [扩展中的代理模式](/ide-extensions/agent/quick-start) 为您的代理赋予工具能力，或使用 [MCP 服务器](/customize/mcp-tools) 向您的代理添加自定义工具。
+
+[了解更多关于 MCP 工具的信息 →](/customize/mcp-tools)
+
+## 自定义 VS Code 设置
+
+调整 IDE 特定的设置，以优化您的 Continue 体验。
+
+[了解更多关于设置的信息 →](/ide-extensions/settings)
+
+## 深入探讨
+
+Continue 内部工作原理和高级配置选项的详细技术解释。
+
+[阅读深入探讨 →](/customize/deep-dives/configuration)
+
+## 参考
+
+完整的配置参考和 API 文档。
+
+[查看参考 →](/reference)
+
+---
+
+无论您选择什么，您可能都会从编辑配置开始。
+
+编辑E编辑您的配置
+
+## Edit Your Configuration
+
+您可以从 悬停在代理上， (聊天侧边栏轻松访问您的配置。通过按n. (hub agents) o（) and c）或 k the Agent sele（tor above）打开侧边栏，然后点击主聊天输入上方的代理选择器。然后，您可以将鼠标悬停在代理上，点击u
+You can easily access your configuration from the Continue Chat sidebar. Open the sidebar by pressing `cmd/ctrl` + `L` (VS Code) or `cmd/ctrl` + `J` (JetBrains) and click the Agent selector above the main chat input. Then, you can hover over an agent and click the `new window` (hub agents) or `gear` (local agents) icon.
+
+管理 管理您的配置
+
+## Manage Your Configuration
+
+- 有关管理中心配置的更多详细信息，请参阅 [编辑中心配](/hub/configs/edit-a-config)
+- 有关本地配置的更多详细信息，请参阅 [配置深入探讨naging your hub configuration
+- See the [Config Deep Dive](/reference) for more details on local configurations

@@ -1,0 +1,553 @@
+---
+title: "使用 Atlassian MCP 和 Continue 管理 Jira 问题和 Confluence 页面"
+description: "使用 Continue 和 Atlassian Rovo MCP，通过自然语言提示搜索、总结和管理 Jira 问题、Confluence 页面和 Compass 组件。"
+sidebarTitle: "使用 Continue 的 Atlassian 工作流"
+---
+
+<Card title="您将构建什么" icon="atlassian">
+  一个 Atlassian 工作流助手，使用 Continue 和 Atlassian Rovo MCP 实现： -
+  跨项目搜索和总结 Jira 问题 - 查找和消化 Confluence 文档 -
+  使用自然语言创建和更新 Jira 问题 - 查询 Compass 组件和服务依赖关系 - 使用无头
+  CLI 运行自动化 Atlassian 工作流
+</Card>
+
+## 前提条件
+
+开始之前，请确保您有：
+
+- 具有 **Hub 访问权限**的 Continue 账户
+  - 阅读：[理解配置 — 如何开始使用 Hub 配置](/guides/understanding-configs#how-to-get-started-with-hub-configs)
+- 本地安装的 Node.js 18+
+- 带有 Jira、Confluence 和/或 Compass 的 Atlassian Cloud 站点
+- 对您要集成的 Atlassian 产品的访问权限
+
+<Note>
+  Atlassian Rovo MCP 服务器目前处于 **Beta**
+  阶段。核心功能可用，但部分功能仍在开发中。
+</Note>
+
+对于所有选项，首先执行：
+
+<Steps>
+<Step title="安装 Continue CLI">
+  ```bash
+  npm i -g @continuedev/cli
+  ```
+  </Step>
+
+<Step title="理解 OAuth 流程">
+  Atlassian MCP 使用 **OAuth 2.1** 进行身份验证。首次连接时，您将完成基于浏览器的授权流程，该流程尊重您现有的 Atlassian 权限。
+  </Step>
+</Steps>
+
+<Warning>
+  要在无头模式下使用代理，您需要 [Continue API
+  密钥](https://hub.continue.dev/settings/api-keys)。 所有数据访问都尊重您现有的
+  Jira、Confluence 和 Compass 用户权限。
+</Warning>
+
+## 选择您的 Atlassian 代理
+
+<Card title="🚀 两个专门的代理" icon="rocket">
+  我们创建了两个现成的代理，帮助您快速开始 - 它们预配置了优化的提示、规则和
+  Atlassian
+  MCP。您不必使用这些代理，但它们旨在立即为您提供最佳体验。根据您的需求选择代理，或创建自己的自定义代理。
+</Card>
+
+### 代理快速参考
+
+| 代理                | 最适合   | 使用场景                                         | 链接                                                                                      |
+| ------------------- | -------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| **Jira 代理**       | 问题管理 | 搜索问题、创建故事、冲刺规划、状态更新、批量操作 | [查看代理](https://hub.continue.dev/continuedev/atlassian-continuous-ai-jira-agent)       |
+| **Confluence 代理** | 文档管理 | 搜索页面、总结文档、创建/更新页面、管理空间      | [查看代理](https://hub.continue.dev/continuedev/atlassian-continuous-ai-confluence-agent) |
+
+<Note>
+  **跨产品工作流**：两个代理都可以与 Jira、Confluence 和 Compass
+  配合使用。根据您的主要关注领域选择，或使用 [Atlassian
+  MCP](https://hub.continue.dev/atlassian/atlassian-mcp)
+  创建自己的代理。Atlassian MCP 可以与 Jira、Compass 或 Confluence 配合使用。
+</Note>
+
+<Tabs>
+  <Tab title="📋 Jira 代理（推荐用于问题管理）">
+    <Steps>
+      <Step title="使用 Jira 代理">
+        访问 Continue Mission Control 上的 [Atlassian Continuous AI - Jira 代理](https://hub.continue.dev/continuedev/atlassian-continuous-ai-jira-agent)。此代理针对以下功能进行了优化：
+        - 搜索和过滤 Jira 问题
+        - 创建和更新问题
+        - 冲刺规划和工作量分析
+        - 问题转换和状态更新
+
+        无需安装 - 您可以立即从命令行开始使用！
+      </Step>
+
+      <Step title="完成 OAuth 授权">
+        首次使用时，系统会提示您在浏览器中授权 MCP 服务器。这是一次性设置，根据您的 Atlassian 权限授予访问权限。
+      </Step>
+
+      <Step title="运行您的第一个命令">
+        在终端的任何位置：
+        ```bash
+        cn --agent continuedev/atlassian-continuous-ai-jira-agent "Show me my open issues assigned to me"
+        ```
+        代理将连接到您的 Atlassian 站点并返回结果。
+      </Step>
+    </Steps>
+
+    <Info>
+      **专业提示**：为 Jira 代理创建 shell 别名：
+      ```bash
+      alias jira-ai='cn --agent continuedev/atlassian-continuous-ai-jira-agent'
+      ```
+      然后使用：`jira-ai "your prompt"`
+    </Info>
+
+  </Tab>
+
+  <Tab title="📄 Confluence 代理（推荐用于文档管理）">
+    <Steps>
+      <Step title="使用 Confluence 代理">
+        访问 Continue Mission Control 上的 [Atlassian Continuous AI - Confluence 代理](https://hub.continue.dev/continuedev/atlassian-continuous-ai-confluence-agent)。此代理针对以下功能进行了优化：
+        - 搜索和总结文档
+        - 创建和更新 Confluence 页面
+        - 管理空间和内容
+        - 文档发现
+
+        无需安装 - 您可以立即从命令行开始使用！
+      </Step>
+
+      <Step title="完成 OAuth 授权">
+        首次使用时，系统会提示您在浏览器中授权 MCP 服务器。这是一次性设置，根据您的 Atlassian 权限授予访问权限。
+      </Step>
+
+      <Step title="运行您的第一个命令">
+        在终端的任何位置：
+        ```bash
+        cn --agent continuedev/atlassian-continuous-ai-confluence-agent "Summarize the Q2 planning page"
+        ```
+        代理将连接到您的 Atlassian 站点并返回结果。
+      </Step>
+    </Steps>
+
+    <Info>
+      **专业提示**：为 Confluence 代理创建 shell 别名：
+      ```bash
+      alias confluence-ai='cn --agent continuedev/atlassian-continuous-ai-confluence-agent'
+      ```
+      然后使用：`confluence-ai "your prompt"`
+    </Info>
+
+  </Tab>
+
+  <Tab title="🛠️ 手动设置">
+    <Steps>
+      <Step title="在 Continue Mission Control 上创建新代理">
+        转到 [Continue Mission Control](https://hub.continue.dev) 并 [创建新代理](https://hub.continue.dev/new?type=agent)。
+      </Step>
+
+      <Step title="添加 Atlassian MCP">
+        从 Hub 安装（推荐）或手动添加 YAML。最小 YAML 示例：
+
+        ```yaml title="config.yaml"
+        mcpServers:
+          - name: Atlassian Rovo MCP
+            type: sse
+            url: https://mcp.atlassian.com/v1/sse
+            connectionTimeout: 30
+        ```
+
+        注意：
+        - Atlassian MCP 使用 **服务器发送事件（SSE）** 传输类型
+        - OAuth 在首次连接时自动处理
+        - 配置中不需要 API 密钥或令牌
+      </Step>
+
+      <Step title="测试连接">
+        启动 Continue 并询问：
+        ```
+        List my Jira projects
+        ```
+        如果是第一次使用，系统会提示您在浏览器中授权。
+      </Step>
+    </Steps>
+
+  </Tab>
+</Tabs>
+
+<Accordion title="代理要求">
+    要将 Atlassian MCP 与 Continue CLI 一起使用，您需要以下任一条件：
+      - 带有模型附加组件的 **Continue CLI Pro 计划**，或
+      - 添加到 Continue Mission Control 密钥中的 **您自己的 API 密钥**
+
+    代理将自动检测并使用您的配置以及 Atlassian MCP 进行 Jira、Confluence 和 Compass 操作。
+
+</Accordion>
+
+---
+
+## Jira 工作流
+
+<Note>
+  **使用 Jira 代理**：以下所有示例均使用 [Jira
+  代理](https://hub.continue.dev/continuedev/atlassian-continuous-ai-jira-agent)，该代理针对问题管理进行了优化。
+</Note>
+
+使用自然语言探索、分类和管理 Jira 问题。代理在后台调用 Atlassian MCP 工具。
+
+<Info>
+  **在无头模式下运行**：在提示前添加 `-p` 标志，并在末尾添加 `--auto` 标志：
+  ```bash cn --agent continuedev/atlassian-continuous-ai-jira-agent -p "your
+  prompt" --auto ``` **重要**：在使用无头模式之前，先完成浏览器 OAuth 身份验证。
+</Info>
+
+### 搜索和发现
+
+<AccordionGroup>
+  <Accordion title="查找开放的错误" icon="bug">
+    搜索跨项目的错误。
+
+    ```bash
+    cn --agent continuedev/atlassian-continuous-ai-jira-agent "Find all open bugs in Project Alpha"
+    ```
+
+  </Accordion>
+
+  <Accordion title="分配给我的问题" icon="user">
+    获取分配给您的问题列表。
+
+    ```bash
+    cn --agent continuedev/atlassian-continuous-ai-jira-agent "Show me all issues assigned to me that are in progress"
+    ```
+
+  </Accordion>
+
+  <Accordion title="冲刺规划" icon="calendar">
+    分析冲刺工作量和优先级。
+
+    ```bash
+    cn --agent continuedev/atlassian-continuous-ai-jira-agent "List all issues in the current sprint. Group by assignee and priority. Summarize the workload distribution and flag any overloaded team members."
+    ```
+
+  </Accordion>
+</AccordionGroup>
+
+### 创建和更新
+
+<AccordionGroup>
+  <Accordion title="从描述创建故事" icon="plus">
+    将自然语言转换为 Jira 故事。
+
+    ```bash
+    cn --agent continuedev/atlassian-continuous-ai-jira-agent "Create a story titled 'Redesign onboarding flow' in Project Alpha. Description: We need to simplify the user registration process by reducing steps from 5 to 3. Target completion: Q3."
+    ```
+
+  </Accordion>
+
+  <Accordion title="批量创建问题" icon="list">
+    从会议记录或规范创建多个问题。
+
+    ```bash
+    cn --agent continuedev/atlassian-continuous-ai-jira-agent "Create five Jira issues from these meeting notes: 1) Fix login timeout bug 2) Update API documentation 3) Implement dark mode toggle 4) Review security audit findings 5) Optimize database queries"
+    ```
+
+  </Accordion>
+
+  <Accordion title="更新问题状态" icon="arrows-rotate">
+    使用自然语言转换问题。
+
+    ```bash
+    cn --agent continuedev/atlassian-continuous-ai-jira-agent "Move PROJ-123 to In Progress and add a comment: Starting work on this today. ETA: end of week."
+    ```
+
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Confluence 工作流
+
+<Note>
+  **使用 Confluence 代理**：以下所有示例均使用 [Confluence
+  代理](https://hub.continue.dev/continuedev/atlassian-continuous-ai-confluence-agent)，该代理针对文档管理进行了优化。
+</Note>
+
+直接从 Continue 访问、搜索和管理您团队的文档。
+
+<Info>
+  **在无头模式下运行**：在提示前添加 `-p` 标志，并在末尾添加 `--auto` 标志：
+  ```bash cn --agent continuedev/atlassian-continuous-ai-confluence-agent -p
+  "your prompt" --auto ``` **重要**：在使用无头模式之前，先完成浏览器 OAuth
+  身份验证。
+</Info>
+
+### 搜索和总结
+
+<AccordionGroup>
+  <Accordion title="总结文档" icon="book">
+    获取 Confluence 页面的快速摘要。
+
+    ```bash
+    cn --agent continuedev/atlassian-continuous-ai-confluence-agent "Summarize the Q2 planning page from the Engineering space"
+    ```
+
+  </Accordion>
+
+  <Accordion title="查找文档" icon="magnifying-glass">
+    在 Confluence 中搜索特定信息。
+
+    ```bash
+    cn --agent continuedev/atlassian-continuous-ai-confluence-agent "Find all pages about API authentication in our developer docs"
+    ```
+
+  </Accordion>
+
+  <Accordion title="列出可用空间" icon="folder">
+    发现您有权访问的 Confluence 空间。
+
+    ```bash
+    cn --agent continuedev/atlassian-continuous-ai-confluence-agent "What Confluence spaces do I have access to?"
+    ```
+
+  </Accordion>
+</AccordionGroup>
+
+### 创建和更新
+
+<AccordionGroup>
+  <Accordion title="创建文档页面" icon="file-plus">
+    生成带有结构化内容的新 Confluence 页面。
+
+    ```bash
+    cn --agent continuedev/atlassian-continuous-ai-confluence-agent "Create a page titled 'Team Goals Q3' in the Engineering space. Include sections for: Objectives, Key Results, and Timeline."
+    ```
+
+  </Accordion>
+
+  <Accordion title="更新现有页面" icon="pen-to-square">
+    修改现有页面上的内容。
+
+    ```bash
+    cn --agent continuedev/atlassian-continuous-ai-confluence-agent "Update the 'Onboarding Guide' page to add a new section about our code review process"
+    ```
+
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Compass 工作流
+
+<Note>
+  **使用任一代理**：Compass 工作流适用于两个代理。对于组件到问题的工作流，使用
+  Jira 代理；对于组件到文档的工作流，使用 Confluence 代理。
+</Note>
+
+通过 Compass 集成查询和管理您的服务架构。
+
+<Info>
+  **在无头模式下运行**：在提示前添加 `-p` 标志，并在末尾添加 `--auto`
+  标志。在使用无头模式之前，先完成浏览器 OAuth 身份验证。
+</Info>
+
+### 服务发现
+
+<AccordionGroup>
+  <Accordion title="查询依赖关系" icon="diagram-project">
+    了解服务关系。
+
+    ```bash
+    cn --agent continuedev/atlassian-continuous-ai-jira-agent "What services depend on the api-gateway component?"
+    ```
+
+  </Accordion>
+
+  <Accordion title="创建服务组件" icon="server">
+    在 Compass 中注册新服务。
+
+    ```bash
+    cn --agent continuedev/atlassian-continuous-ai-jira-agent "Create a service component for the current repository. Use the package.json to infer details."
+    ```
+
+  </Accordion>
+
+  <Accordion title="批量导入组件" icon="upload">
+    从结构化数据导入多个组件。
+
+    ```bash
+    cn --agent continuedev/atlassian-continuous-ai-jira-agent "Import Compass components and custom fields from this CSV: [paste CSV data]"
+    ```
+
+    或引用文件：
+    ```bash
+    cn --agent continuedev/atlassian-continuous-ai-jira-agent "Import Compass components from services.csv in the current directory"
+    ```
+
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## 组合工作流
+
+<Note>
+  **跨产品工作流**：这些工作流跨越多个 Atlassian
+  产品。根据您的主要关注点选择代理： - 当工作流以问题为中心时，使用 **Jira
+  代理** - 当工作流以文档为中心时，使用 **Confluence 代理**
+</Note>
+
+集成跨 Jira、Confluence 和 Compass 的操作，实现强大的跨产品工作流。
+
+<Info>
+  **在无头模式下运行**：在提示前添加 `-p` 标志，并在末尾添加 `--auto`
+  标志。在使用无头模式之前，先完成浏览器 OAuth 身份验证。
+</Info>
+
+<AccordionGroup>
+  <Accordion title="将 Jira 链接到 Confluence" icon="link">
+    跨产品连接相关内容。
+
+    ```bash
+    # 使用 Jira 代理进行以问题为中心的工作流
+    cn --agent continuedev/atlassian-continuous-ai-jira-agent "Link Jira tickets PROJ-123, PROJ-456, and PROJ-789 to the 'Sprint 23 Release Plan' Confluence page"
+    ```
+
+  </Accordion>
+
+  <Accordion title="服务文档查找" icon="search">
+    查找特定组件的文档。
+
+    ```bash
+    # 使用 Confluence 代理进行以文档为中心的工作流
+    cn --agent continuedev/atlassian-continuous-ai-confluence-agent "Fetch the Confluence documentation page linked to the user-authentication Compass component"
+    ```
+
+  </Accordion>
+
+  <Accordion title="生成发布说明" icon="file-lines">
+    从已完成的工作创建发布文档。
+
+    ```bash
+    # 使用 Jira 代理提取问题数据并在 Confluence 中创建
+    cn --agent continuedev/atlassian-continuous-ai-jira-agent "Generate release notes for all Jira issues completed in Sprint 23. Create a Confluence page in the Release Notes space with: New features (grouped by epic), Bug fixes, Known issues, Deployment instructions"
+    ```
+
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## 故障排除
+
+<AccordionGroup>
+  <Accordion title="OAuth 授权问题">
+    - **"您的站点管理员必须授权此应用"**：站点管理员需要先完成 OAuth 流程，然后其他用户才能连接
+    - **无法完成浏览器授权**：确保您已登录正确的 Atlassian Cloud 站点并拥有必要的权限
+    - **连接超时**：增加 MCP 配置中的 `connectionTimeout` 或检查您的网络连接
+  </Accordion>
+
+<Accordion title="权限错误">
+  - **"访问被拒绝"或"禁止"**：MCP 尊重您现有的 Atlassian
+  权限。验证您对要访问的项目/空间/组件有访问权限 -
+  **无法创建问题**：确保您在目标 Jira 项目中有"创建问题"权限 - **无法编辑
+  Confluence 页面**：验证您在目标 Confluence 空间中有编辑权限
+</Accordion>
+
+<Accordion title="速率限制">
+  - **标准计划**：中等使用阈值 - **高级/企业计划**：更高的配额（每小时 1,000
+  个请求加上每用户限制） - 如果遇到速率限制，请降低查询频率或批量操作
+</Accordion>
+
+  <Accordion title="Beta 限制">
+    - 批量操作可能受到速率限制的约束
+    - 自定义 Jira 字段可能需要显式设置才能被识别
+    - 单个会话内不支持工作区/站点切换
+    - 查看 [Atlassian Community](https://community.atlassian.com/) 了解已知问题
+  </Accordion>
+</AccordionGroup>
+
+### 管理员考虑事项
+
+<Card title="针对 Atlassian 站点管理员" icon="shield">
+  **安装**：Atlassian Rovo MCP 在首次 OAuth 授权时自动安装（JIT 安装）- 无需 Marketplace 安装。
+
+**管理访问权限**：
+
+- 在 [Admin Hub](https://admin.atlassian.com) 中查看已连接的应用
+- 用户可以从其 [个人资料设置](https://id.atlassian.com/manage-profile/apps) 撤销访问权限
+- 通过 Admin Hub 中的"用户安装的应用"控件阻止用户安装的应用
+
+**安全性**：所有流量都通过 HTTPS（TLS 1.2+）加密，访问权限尊重现有的用户权限。
+
+</Card>
+
+---
+
+## 您已构建的内容
+
+完成本指南后，您将拥有一个完整的 **AI 驱动的 Atlassian 工作流系统**，该系统：
+
+- ✅ 使用自然语言 — 复杂 Atlassian 操作的简单提示
+- ✅ 跨多个产品 — 无缝跨 Jira、Confluence 和 Compass 工作
+- ✅ 尊重权限 — 基于 OAuth 的安全访问，带有现有的角色执行
+- ✅ 无头运行 — 集成到 CI/CD 管道和自动化脚本中
+
+<Card title="持续 AI" icon="rocket">
+  您的 Atlassian 工作流现在运行在 **[Level 2 持续
+  AI](https://blog.continue.dev/what-is-continuous-ai-a-developers-guide/)** -
+  AI 处理日常项目管理任务，通过审查和批准进行人工监督。
+</Card>
+
+## 下一步
+
+1. **探索您的项目** - 尝试 Jira 搜索和分类提示
+2. **组织文档** - 使用 Confluence 工作流总结和创建页面
+3. **映射您的服务** - 查询 Compass 获取服务依赖关系
+4. **自定义提示** - 调整工作流以满足团队的特定需求
+5. **监控使用情况** - 跟踪 AI 如何改进您的 Atlassian 工作流
+
+## 附加资源
+
+<CardGroup cols={2}>
+  <Card
+    title="Atlassian Rovo MCP"
+    icon="link"
+    href="https://support.atlassian.com/atlassian-rovo-mcp-server/docs/getting-started-with-the-atlassian-remote-mcp-server/"
+  >
+    官方 Atlassian MCP 文档
+  </Card>
+  <Card title="Continue 中的 MCP" icon="book" href="/customize/deep-dives/mcp">
+    MCP 如何与 Continue 代理配合使用
+  </Card>
+  <Card
+    title="Continue Mission Control"
+    icon="globe"
+    href="https://hub.continue.dev"
+  >
+    创建和管理您的代理
+  </Card>
+  <Card
+    title="Atlassian Community"
+    icon="users"
+    href="https://community.atlassian.com/"
+  >
+    获取帮助并分享反馈
+  </Card>
+</CardGroup>
+
+## 示例用例
+
+<CardGroup cols={2}>
+  <Card title="发布管理" icon="rocket">
+    自动化发布说明生成，将问题链接到文档，并跨 Jira 和 Confluence 跟踪部署状态。
+  </Card>
+  <Card title="冲刺规划" icon="calendar-days">
+    自动分析工作量分布，识别障碍，并生成冲刺摘要。
+  </Card>
+  <Card title="服务所有权" icon="sitemap">
+    在 Compass 中映射服务依赖关系，链接到 Confluence 中的技术文档，并在 Jira
+    中跟踪相关问题。
+  </Card>
+  <Card title="入职自动化" icon="user-plus">
+    创建标准化的 Jira 入职工单，链接到 Confluence 指南，并跟踪新员工的进度。
+  </Card>
+</CardGroup>

@@ -1,0 +1,69 @@
+---
+title: Continue 文档 MCP 服务器
+description: 设置 MCP 服务器以搜索 Continue 文档
+keywords: [mcp, documentation, search, mintlify, reference]
+---
+
+Continue 文档 MCP 服务器允许您在代理对话中直接搜索和检索 Continue 文档的信息。
+
+## 设置
+
+### 配置 Continue
+
+1. 在工作区的顶层创建一个名为 `.continue/mcpServers` 的文件夹
+2. 向此文件夹添加一个名为 `continue-docs-mcp.yaml` 的文件
+3. 写入以下内容并保存：
+
+```yaml title=".continue/mcpServers/continue-docs-mcp.yaml"
+name: Continue Documentation MCP
+version: 0.0.1
+schema: v1
+mcpServers:
+  - uses: continuedev/continue-docs-mcp
+```
+
+### 启用代理模式
+
+MCP 服务器仅在代理模式下工作。测试前请确保在 Continue 中切换到代理模式。
+
+## 使用示例
+
+配置完成后，您可以使用 MCP 服务器搜索 Continue 文档：
+
+### 模型配置帮助
+
+```
+如何在 Continue 中从 Bedrock 添加 Claude 4 Sonnet 作为模型？
+```
+
+### 上下文提供程序
+
+```
+Continue 中有哪些上下文提供程序可用？
+```
+
+### 自定义
+
+```
+如何在 Continue 配置中添加自定义规则？
+```
+
+## 故障排除
+
+### MCP 服务器无法加载
+
+1. **检查配置**：确保您的 YAML 配置使用了正确的 `uses` 字段，值为 `continuedev/continue-docs-mcp`
+2. **检查代理模式**：MCP 服务器仅在代理模式下工作
+3. **重启 Continue**：尝试重启 Continue 扩展
+
+### 没有搜索结果
+
+1. **验证连接**：MCP 服务器需要互联网访问才能搜索文档
+2. **检查查询格式**：尝试重新表述您的搜索查询
+3. **使用已知主题测试**：搜索文档完善的功能，如 "model configuration"（模型配置）
+
+## 相关文档
+
+- [MCP 概述](/customize/deep-dives/mcp)
+- [代理模式](/ide-extensions/agent/quick-start)
+- [配置](/customize/overview)

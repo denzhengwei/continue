@@ -1,0 +1,167 @@
+---
+title: "如何在 Continue 中设置模型上下文协议 (MCP)"
+description: MCP 使用和自定义
+keywords: [tool, use, function calling, claude, automatic]
+sidebarTitle: "模型上下文协议 (MCP)"
+---
+
+随着 AI 系统变得越来越好，它们仍然受到训练数据的限制，无法访问实时信息或专业工具。[模型上下文协议](https://modelcontextprotocol.io/introduction) (MCP) 通过让 AI 模型连接外部数据源、工具和环境来解决这个问题。这允许 AI 系统与更广泛的数字世界之间平滑共享信息和能力。这个由 Anthropic 创建的标准，旨在统一提示词、上下文和工具使用，是构建真正有用的 AI 体验的关键，可以使用自定义工具进行设置。
+
+## MCP 在 Continue 中的工作原理
+
+目前，可以使用模型上下文协议标准来配置自定义工具，以统一提示词、上下文和工具使用。
+
+可以使用 `mcpServers` 将 MCP 服务器添加到中心配置中。您可以在 [这里](https://hub.continue.dev/explore/mcp) 探索可用的 MCP 服务器。
+
+<Info>MCP 只能在 **代理** 模式下使用。</Info>
+
+## 快速入门：如何设置您的第一个 MCP 服务器
+
+以下是在您的配置中设置新 MCP 服务器的快速示例：
+
+1. 在您的工作区顶层创建一个名为 `.continue/mcpServers` 的文件夹
+2. 向此文件夹添加一个名为 `playwright-mcp.yaml` 的文件
+3. 编写以下内容并保存
+
+```yaml title=".continue/mcpServers/playwright-mcp.yaml"
+name: Playwright mcpServer
+version: 0.0.1
+schema: v1
+mcpServers:
+  - name: Browser search
+    command: npx
+    args:
+      - "@playwright/mcp@latest"
+```
+
+现在通过提示以下命令来测试您的 MCP 服务器：
+
+```
+打开浏览器并导航到 Hacker News。将前 10 个标题保存到 hn.txt 文件中。
+```
+
+结果将是在当前工作目录中生成一个名为 `hn.txt` 的文件。
+
+![playwright mcp](/images/mcp-playwright.png)
+
+## 如何使用 MCP 设置 Continue 文档搜索
+
+您可以设置一个 MCP 服务器，直接从您的配置中搜索 Continue 文档。这对于获取有关 Continue 配置和功能的帮助特别有用。
+
+有关完整的设置说明、故障排除和使用示例，请参阅 [Continue MCP 参考](/reference/continue-mcp)。
+
+## 使用来自 Claude、Cursor、Cline 等的 JSON MCP 格式
+
+<Info>
+如果您来自另一个使用 JSON MCP 格式配置文件的工具（如 Claude Desktop、Cursor 或 Cline），您可以将这些 JSON 配置文件直接复制到您的 `.continue/mcpServers/` 目录（注意复数 "Servers"），Continue 将自动拾取它们。
+
+例如，将您的 JSON MCP 配置文件放在工作区的 `.continue/mcpServers/mcp.json` 处。
+
+</Info>
+
+## 如何配置 MCP 服务器
+
+要设置您自己的 MCP 服务器，请阅读 [MCP 快速入门](https://modelcontextprotocol.io/quickstart)，然后 [创建一个 `mcpServers`](https://hub.continue.dev/new?type=block&blockType=mcpServers) 或向您的 [配置文件](./configuration.md) 添加本地 MCP 服务器块：
+
+```yaml title="config.yaml"
+# ...
+mcpServers:
+  - name: SQLite MCP
+    command: npx
+    args:
+      - "-y"
+      - "mcp-sqlite"
+      - "/path/to/your/database.db"
+# ...
+```
+
+<Note>
+  在 `.continue/mcpServers/`
+  中创建独立块文件时，请记住包含所需的元数据字段（`name`、`version`、`schema`），如上面的快速入门示例所示。
+</Note>
+
+### 如何配置 MCP 服务器属性
+
+MCP 组件包括一些特定于 MCP 服务器的附加属性。
+
+- `name`：MCP 服务器的显示名称。
+- `type`：MCP 服务器的类型：`sse`、`stdio`、`streamable-http`
+- `command`：启动 MCP 服务器的命令。
+- `args`：传递给命令的参数。
+- `env`：作为环境变量注入到命令中的密钥。
+
+### 如何选择 MCP 传输类型
+
+MCP 现在通过基于 HTTP 的传输支持远程服务器连接，超越了传统的本地 stdio 传输方法。这使得可以与云托管的 MCP 服务器和分布式架构集成。
+
+#### 如何使用服务器发送事件传输 (`sse`)
+
+对于实时流通信，使用 SSE 传输：
+
+```yaml
+# ...
+mcpServers:
+  - name: Name
+    type: sse
+    url: https://....
+# ...
+```
+
+#### 如何使用标准输入/输出 (`stdio`)
+
+对于通过标准输入和输出通信的本地 MCP 服务器：
+
+```yaml
+# ...
+mcpServers:
+  - name: Name
+    type: stdio
+    command: npx
+    args:
+      - "@modelcontextprotocol/server-sqlite"
+      - "/path/to/your/database.db"
+# ...
+```
+
+#### 如何使用可流 HTTP 传输
+
+对于具有流功能的标准基于 HTTP 的通信：
+
+```yaml
+# ...
+mcpServers:
+  - name: Name
+    type: streamable-http
+    url: https://....
+# ...
+```
+
+这些远程传输选项允许您连接到托管在远程基础设施上的 MCP 服务器，实现更灵活的部署架构和跨多个客户端的共享服务器资源。
+
+有关传输机制及其用例的详细信息，请参阅官方 MCP 文档中的 [传输](https://modelcontextprotocol.io/docs/concepts/transports#server-sent-events-sse)。
+
+### 如何在 MCP 服务器中使用密钥
+
+对于某些 MCP 服务器，您需要使用 API 密钥或其他密钥。您可以利用本地存储的环境密钥，也可以访问 Continue Mission Control 中的托管密钥。要利用中心密钥，您可以在 MCP env 块中使用 `inputs` 属性而不是 `secrets`。
+
+```yaml
+# ...
+mcpServers:
+  - name: Supabase MCP
+    command: npx
+    args:
+      - -y
+      - "@supabase/mcp-server-supabase@latest"
+      - --access-token
+      - ${{ secrets.SUPABASE_TOKEN }}
+    env:
+      SUPABASE_TOKEN: ${{ secrets.SUPABASE_TOKEN }}
+  - name: GitHub
+    command: npx
+    args:
+      - "-y"
+      - "@modelcontextprotocol/server-github"
+    env:
+      GITHUB_PERSONAL_ACCESS_TOKEN: ${{ secrets.GITHUB_PERSONAL_ACCESS_TOKEN }}
+# ...
+```

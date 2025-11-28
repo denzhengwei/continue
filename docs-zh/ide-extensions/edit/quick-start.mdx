@@ -1,0 +1,39 @@
+---
+title: "Continue Edit 快速入门"
+sideBarTitle: "快速入门"
+description: "开始使用 Continue 的 Edit 功能，使用 AI 建议直接在您的文件中进行快速、有针对性的代码更改，并使用键盘快捷键接受或拒绝修改"
+---
+
+## 如何使用 Continue Edit
+
+Edit 是一种方便的方式，可以对特定代码和文件进行快速更改。选择代码，描述您的代码更改，差异将内联流式传输到您的文件中，您可以接受或拒绝。
+
+Edit 推荐用于小范围、有针对性的更改，例如
+
+- 编写注释
+- 生成单元测试
+- 重构函数或方法
+
+## 如何激活 Edit
+
+高亮显示您想要修改的代码块，然后按 `Cmd+I`（Mac）或 `Ctrl+I`（Windows/Linux）激活 Edit 模式。您也可以在没有高亮代码的情况下按 `Cmd/Ctrl+I`，这将默认在当前光标位置插入代码。
+
+激活 Edit 后，您就可以提供指令了。
+
+### 如何提供指令
+
+描述您希望模型对您高亮显示的代码进行的更改。对于编辑，一个好的提示应该相对简短和简洁。对于更长、更复杂的任务，我们建议使用 [聊天](/ide-extensions/chat/quick-start)。
+
+### 如何接受或拒绝更改
+
+建议的更改会以内联差异的形式显示在您高亮显示的文本中。
+
+您可以浏览每个建议的更改，使用 `Cmd+Opt+Y`（Mac）或 `Ctrl+Alt+Y`（Windows/Linux）接受，或使用 `Cmd+Opt+N`（Mac）或 `Ctrl+Alt+N`（Windows/Linux）拒绝。
+
+您也可以一次接受或拒绝所有更改，使用 `Cmd+Shift+Enter`（Mac）或 `Ctrl+Shift+Enter`（Windows/Linux）接受，或使用 `Cmd+Shift+Delete`（Mac）或 `Ctrl+Shift+Backspace`（Windows/Linux）拒绝。
+
+如果您想为同一高亮代码部分请求新的建议，可以使用 `Cmd+I`（Mac）或 `Ctrl+I`（Windows/Linux）重新提示模型。
+
+## 如何在 Jetbrains 中使用 Edit
+
+在 Jetbrains 中，Edit 以行内弹出窗口的形式实现。请参阅标题 GIF 示例。

@@ -1,0 +1,214 @@
+---
+title: "代理入门"
+description: "在 Mission Control 中运行 AI 工作流的快速入门指南"
+sidebarTitle: "入门"
+---
+
+<Card title="🚀 Mission Control 快速开始" icon="rocket">
+  Mission Control 是您用于运行和管理 AI 代理的 Web
+  界面。使用预构建的工作流，在几分钟内开始使用安全扫描、GitHub
+  管理、分析洞察等功能。
+</Card>
+
+<Info>
+  Mission Control 处于测试阶段。请在 [GitHub
+  discussions](https://github.com/continuedev/continue/discussions/8051)
+  中与我们分享任何反馈。
+</Info>
+
+使用 Mission Control 启动代理，用于：
+
+- **错误修复和代码质量** - 解决细节问题和技术债务
+- **功能开发** - 构建样板文件繁重的功能
+- **安全与合规** - [自动化漏洞扫描](../guides/snyk-mcp-continue-cookbook)
+- **调查与分析** - 研究问题以启动您的工作
+- **自定义工作流** - 使用您自己的规则和提示词运行可重复任务
+
+## 快速开始
+
+<Steps>
+  <Step title="访问 Mission Control">
+    前往 [hub.continue.dev/agents](https://hub.continue.dev/agents) 并使用您的
+    GitHub 账户连接。 ![Mission Control
+    设置](/images/hub/workflows/images/workflows-setup.png)
+  </Step>
+
+  <Step title="选择代理">
+    从预配置的代理中选择或创建您自己的代理：
+    <CardGroup cols={2}>
+      <Card title="安全扫描器" icon="shield-check">
+        `continuedev/snyk-continuous-ai-agent` 查找漏洞并创建修复 PR
+      </Card>
+
+      <Card title="GitHub 管理器" icon="github">
+        `continuedev/github-project-manager-agent` 分类问题并管理工作流
+      </Card>
+    </CardGroup>
+  </Step>
+
+  <Step title="运行您的第一个代理">
+    输入提示词并观察您的代理工作： ``` "修复 api/users.ts 中的 TypeError
+    并打开带有测试的 PR" ```
+  </Step>
+</Steps>
+
+<Info>
+  **新接触代理？** 查看我们的
+  [预配置代理](/hub/agents/overview#pre-configured-agents) 立即测试工作流。
+</Info>
+
+## 先尝试代理：60秒挑战
+
+在创建自己的代理之前，让我们先看看一个代理的实际运行！体验 Continue 代理强大功能的最快方式是使用我们的演示仓库。
+
+![代理 Mission Control](/images/hub/assets/images/agent-mission-control.gif)
+
+### 观看代理在 60 秒内创建 Pull Request
+
+<Steps>
+  <Step title="🍴 Fork 我们的演示仓库">
+    获取一个安全的沙箱进行实验：
+    
+    **选项 1：GitHub Web 界面**
+    访问 [github.com/continuedev/demo-project](https://github.com/continuedev/demo-project) 并点击 **Fork**
+    
+    **选项 2：GitHub CLI**
+    ```bash
+    gh repo fork continuedev/demo-project
+    ```
+  </Step>
+
+<Step title="🎯 访问 Mission Control">
+  前往 [hub.continue.dev/agents](https://hub.continue.dev/agents) 并： - **连接
+  GitHub** 并在提示时授权 Continue - 这将使代理能够访问您的仓库以创建 PR
+</Step>
+
+<Step title="🚀 运行您的第一个代理">
+  **将目标设置为您的 forked 演示仓库** 并尝试以下命令之一：
+  <Tabs>
+    <Tab title="添加新功能">``` 创建一个计算斐波那契数列的新函数。 ```</Tab>
+
+    <Tab title="修复现有错误">``` 修复 api/users.ts 中的 TypeError ```</Tab>
+
+    <Tab title="添加文档">``` 添加带有设置说明的全面 README 文档。 ```</Tab>
+  </Tabs>
+</Step>
+
+  <Step title="✨ 观看魔法发生">
+    **结果：** 在您的演示仓库中打开一个完整的 Pull Request，包含：
+    - 完整的实现或修复
+    - 适当的提交消息
+    - 详细的 PR 描述
+    - 准备好进行审查和合并
+  </Step>
+</Steps>
+
+<Info>
+  **为什么使用演示仓库？** - **安全的测试环境** - 不会对您的生产代码造成风险 -
+  **预配置的问题** - 常见的错误和功能可供练习 - **即时结果** -
+  无需设置复杂性即可看到代理的实际运行 - **通过示例学习** - 研究生成的代码和 PR
+  描述
+</Info>
+
+<Tip>
+  一旦您看到代理如何与演示仓库配合工作，您将确切了解如何为实际项目创建和自定义自己的代理！
+</Tip>
+
+## 示例工作流任务
+
+以下是您可以尝试使用代理执行的一些示例任务：
+
+<AccordionGroup>
+  <Accordion title="错误修复和代码质量">
+    
+    - "修复 api/users.ts 中用户对象可能未定义的 TypeError"
+    - "在 services/ 目录中为所有数据库查询结果添加空检查"
+    - "修复 components 文件夹中的所有 ESLint 警告并打开 PR"
+    - "将遗留组件中的已弃用 React 生命周期方法更新为 hooks"
+    
+  </Accordion>
+
+<Accordion title="功能开发">
+  - "创建一个新的 REST 端点，用于用户资料更新，带有验证和错误处理" -
+  "为产品列表页面添加带有上一页/下一页按钮的分页功能" - "使用 Tailwind CSS
+  类在所有页面上实现深色模式切换" - "使用 Jest 为身份验证服务添加单元测试"
+</Accordion>
+
+<Accordion title="安全与合规">
+  - "运行完整的安全扫描并为关键漏洞创建 GitHub 问题" - "扫描代码库以查找硬编码的
+  API 密钥并将它们移至环境变量" - "为所有面向用户的表单字段添加输入清理" -
+  "更新具有安全漏洞的 npm 包并测试兼容性"
+</Accordion>
+
+<Accordion title="文档和样板文件">
+  - "为 utils/ 目录中的所有导出函数添加 JSDoc 注释" -
+  "为新的支付处理模块创建带有设置说明的 README.md" - "为所有 API 响应模式生成
+  TypeScript 接口" - "为所有缺少 try-catch 块的异步函数添加错误处理样板文件"
+</Accordion>
+
+<Accordion title="调查与分析">
+  - "调查登录 API 为什么间歇性返回 500 错误并提出修复建议" -
+  "分析数据处理管道中的性能瓶颈" - "审查 orders 表的数据库架构并提出优化建议" -
+  "查找所有与身份验证相关的 TODO 注释并创建摘要"
+</Accordion>
+
+  <Accordion title="重构">
+    
+    - "将控制器中重复的验证逻辑提取到共享的实用函数中"
+    - "将 src/legacy 中的所有类组件转换为带有 hooks 的函数组件"
+    - "在整个代码库中将所有 'userId' 实例重命名为 'accountId'"
+    - "将 500 行的 UserService.ts 拆分为更小的、单一职责的服务"
+    
+  </Accordion>
+</AccordionGroup>
+
+## 运行代理的方式
+
+选择适合您工作流的方法：
+
+<Tabs>
+  <Tab title="🌐 Mission Control">
+    **用于交互式使用的 Web 界面** 完美适用于： - 探索代理功能 - 行动前审查输出 -
+    团队协作 - 一次性任务
+    访问地址：[hub.continue.dev/agents](https://hub.continue.dev/agents)
+  </Tab>
+
+  <Tab title="💻 CLI (TUI 模式)">
+    **用于开发的终端界面** ```bash cn --agent
+    continuedev/github-project-manager-agent ``` 完美适用于： - 本地开发工作流 -
+    测试代理行为 - 交互式调试 - 快速迭代
+  </Tab>
+
+  <Tab title="🤖 无头模式">
+    **用于 CI/CD 的自动化执行** ```bash cn --agent
+    continuedev/snyk-continuous-ai-agent -p "Run security scan" --auto ```
+    完美适用于： - 计划工作流 - CI/CD 集成 - Webhook 触发器 - 后台处理
+  </Tab>
+</Tabs>
+
+## 成功的最佳实践
+
+使用代理（持续 AI）的实践需要深思熟虑地设置护栏和习惯：
+
+<CardGroup cols={2}>
+  <Card title="从小处开始" icon="seedling">
+    从您确信 Continue 可以处理的任务开始，例如修复已知的简单解决方案的错误。
+  </Card>
+
+  <Card title="本地练习" icon="terminal">
+    在部署自动化之前，使用 [Continue CLI](../guides/cli) 在 TUI 模式下进行测试。
+  </Card>
+
+  <Card title="彻底详细" icon="clipboard-list">
+    代理可以运行很长时间 - 投入时间编写包含所有重要上下文的详细提示词。
+  </Card>
+
+  <Card title="团队对齐" icon="users">
+    讨论代理使用情况并调整代码审查习惯，以适应更高的 PR 数量。
+  </Card>
+</CardGroup>
+
+<Info>
+  **了解更多**：在 [Continuous AI Blog](https://blog.continue.dev)
+  上探索高级模式和案例研究。
+</Info>

@@ -1,0 +1,197 @@
+---
+title: "创建和编辑代理"
+description: "通过 Continue Mission Control 界面使用提示词、规则和工具构建自定义 AI 工作流"
+sidebarTitle: "创建和编辑"
+---
+
+<Card title="创建自定义代理" icon="wrench">
+  您只能通过 Continue Mission Control Web 界面中的 Mission Control
+  创建和编辑代理。 这确保了适当的验证、版本控制和团队协作功能。
+</Card>
+
+## 创建代理
+
+![创建代理 gif](/images/hub/create-an-agent.gif)
+
+<Steps>
+  <Step title="🧭 导航到创建代理">
+    从 Continue Mission Control 顶部导航栏中，选择 **"+"** → **"New Agent"**。
+    
+    这将打开包含所有必填字段的 **创建代理（测试版）** 表单。
+
+  </Step>
+
+  <Step title="🧩 填写代理表单">
+    使用以下字段配置您的代理：
+
+    | 字段 | 输入内容 | 示例 |
+    |-------|---------------|---------|
+    | **名称** | 在 Mission Control 中显示的名称 | `GitHub PR 代理` |
+    | **提示词** | 代理收到的第一条指令 | `打开 GitHub PR 以修复指定问题。` |
+    | **描述** | 代理的功能 | `创建拉取请求并包含 AI 生成的摘要。` |
+    | **工具（MCP）** | 选择内置或自定义 MCP | `GitHub、PostHog、Supabase` |
+    | **规则** | 添加任何组织规则 | `continuedev/gh-pr-commit-workflow, continuedev/summarization` |
+    | **模型** | 选择默认 LLM | `Claude Sonnet 4.5` |
+    | **所有者 + 标识符** | 确定命名空间 | `my-org/github-pr-agent` |
+    | **可见性** | 访问级别 | `公开、组织或私有` |
+
+    <Info>
+      **提示**：从简单的提示词开始，通过规则和工具增加复杂性。提示词应该是一个清晰的单一指令，定义代理的主要目标。
+    </Info>
+
+  </Step>
+
+  <Step title="💡 预览配置">
+    当您填写字段时，右侧面板会显示代理 YAML 配置的实时预览：
+
+    ```yaml
+    name: Open PR with Fix
+    description: Open a GitHub PR to fix the specified issue
+
+tools: built_in, anthropic/github-mcp
+rules:
+
+- continuedev/gh-pr-commit-workflow
+- continuedev/summarization
+  model: Claude Sonnet 4.5
+  visibility: public
+  ```
+
+      此预览可帮助您在创建代理之前验证配置。
+
+    </Step>
+
+  <Step title="✅ 创建和测试">
+    点击 **"Create Agent"** 保存并发布它。
+    
+    您的代理立即可用，可以在以下位置运行：
+    - Mission Control Web 界面
+    - TUI 模式：`cn --agent your-org/your-agent-name`
+    - 无头模式：`cn --agent -p your-org/your-agent-name "prompt" --auto`
+  </Step>
+</Steps>
+
+## 编辑代理
+
+您可以编辑您拥有或属于您组织的任何代理。
+
+<Steps>
+  <Step title="🧭 访问代理">
+    从 **Agents** 页面或 Mission Control 视图中，点击您的代理名称，然后选择 **"Edit Agent"**。
+  </Step>
+
+  <Step title="🔧 更新配置">
+    您可以修改以下任何组件：
+
+    <Tabs>
+      <Tab title="提示词">
+        **优化任务行为**
+
+        ```
+        # 之前
+        修复认证系统中的错误
+
+        # 之后
+        通过以下方式修复认证错误：
+        1. 确定根本原因
+        2. 实施安全解决方案
+        3. 添加适当的测试
+        4. 打开带有详细说明的 PR
+        ```
+      </Tab>
+
+      <Tab title="规则">
+        **执行团队标准**
+
+        添加或删除组织规则：
+        - `continuedev/security-first` - 始终扫描漏洞
+        - `continuedev/test-coverage` - 新代码需要测试
+        - `my-org/style-guide` - 遵循公司编码标准
+      </Tab>
+
+      <Tab title="工具（MCP）">
+        **连接其他系统**
+
+        - 添加 GitHub MCP 用于仓库操作
+        - 包含 Sentry MCP 用于错误监控
+        - 连接 Supabase MCP 用于数据库操作
+        - 使用自定义 MCP 用于内部工具
+      </Tab>
+
+      <Tab title="模型和可见性">
+        **调整行为和访问权限**
+
+        - **模型**：在 Claude、GPT-4 或其他支持的 LLM 之间切换
+        - **可见性**：控制谁可以查看和使用代理
+          - 公开：任何人都可以发现和使用
+          - 组织：只有您的团队成员
+          - 私有：只有您可以访问
+      </Tab>
+    </Tabs>
+
+  </Step>
+
+  <Step title="💾 保存更改">
+    完成后点击 **"Update Agent"**。
+    
+    更新后的版本立即对您的团队可用，并具有自动版本控制以进行更改跟踪。
+  </Step>
+</Steps>
+
+<Warning>彻底测试您的代理，确保它们按预期交互。</Warning>
+
+## 示例代理配置
+
+以下是您可以创建或用作灵感的经过验证的代理配置：
+
+<CardGroup cols={2}>
+  <Card title="安全扫描代理" icon="shield" href="https://hub.continue.dev/continuedev/snyk-continuous-ai-agent">
+    **Snyk 持续 AI 代理** - 带有 Snyk MCP 集成的全面安全扫描。
+    
+    自动化依赖分析、漏洞扫描，并创建带有 AI 驱动修复建议的修复 PR。
+  </Card>
+
+<Card
+  title="性能监控"
+  icon="gauge"
+  href="https://hub.continue.dev/continuedev/netlify-continuous-ai-agent"
+>
+  **Netlify 持续 AI 代理** - 带有 A/B 测试和监控的性能优化。 跟踪 Core Web
+  Vitals，识别回归，并提供优化建议。
+</Card>
+
+<Card
+  title="错误监控代理"
+  icon="bug"
+  href="https://hub.continue.dev/continuedev/sentry-continuous-ai-agent"
+>
+  **Sentry 持续 AI 代理** - 自动错误分析和问题创建。
+  监控生产错误，提供根本原因分析，并创建可操作的 GitHub 问题。
+</Card>
+
+<Card
+  title="GitHub 管理"
+  icon="github"
+  href="https://hub.continue.dev/continuedev/github-manager-ai-agent"
+>
+  **GitHub 管理器 AI 代理** - 全面的 GitHub 工作流自动化。
+  使用自然语言提示词处理问题分类、PR 审查和发布说明生成。
+</Card>
+
+  <Card title="数据库管理" icon="database" href=" https://hub.continue.dev/continuedev/supabase-agent">
+    **Supabase 持续 AI 代理** - 数据库安全和管理工作流。
+    
+    审计行级安全性，识别漏洞，并自动生成修复。
+  </Card>
+</CardGroup>
+
+## 故障排除
+
+常见问题和解决方案：
+
+| 问题                 | 解决方案                                               |
+| -------------------- | ------------------------------------------------------ |
+| **代理无法完成任务** | 简化提示词，添加更具体的说明，验证工具权限             |
+| **工具不工作**       | 检查 MCP 配置，验证 Hub 设置中的 API 密钥和权限        |
+| **行为不一致**       | 添加规则以强制执行一致的模式，使用各种输入场景进行测试 |
+| **性能问题**         | 考虑模型选择，简化复杂的多步骤工作流，优化工具使用     |

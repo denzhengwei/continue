@@ -1,0 +1,156 @@
+---
+title: "Slack 代理"
+description: "通过在 Slack 中提及 @Continue 来启动后台代理"
+---
+
+<Warning>
+
+  Continue Slack 应用目前处于测试开发阶段，正在接受 Slack 的审批流程。
+
+</Warning>
+
+## 概述
+
+在任何频道中提及 @Continue 并附带任务描述，它将：
+
+- 创建一个新的开发代理
+- 克隆并处理您的仓库
+- 生成代码更改并创建拉取请求
+- 随时向您更新进度
+
+<Card title="它的优势" icon="slack">
+
+  - 快速修复错误和实现功能
+  - 代码审查和重构
+  - 文档更新
+  - 自动化开发任务
+
+</Card>
+
+## 设置
+
+可以通过 Mission Control 将 Continue 的 Slack 机器人安装到 Slack 工作区，从以下位置访问：[集成设置](https://hub.continue.dev/integrations)
+- 组织集成设置 - `https://hub.continue.dev/organizations/{your-org}/settings/integrations`
+
+<Warning>
+
+  Continue 的 Slack 应用处于测试开发阶段。在安装过程中，您会看到一个警告，表明它尚未获得批准/正式发布。
+
+</Warning>
+
+<Steps>
+
+  <Step title="连接 GitHub">
+
+    在集成设置中点击 GitHub 旁边的"连接"，并授予 Continue 访问您想要处理的仓库的权限。
+
+  </Step>
+
+  <Step title="授权 Slack">
+
+    点击 Slack 旁边的"连接"按钮，并在您的工作区中授权该应用。
+
+  </Step>
+
+  <Step title="设置默认仓库（可选）">
+
+    使用 Slack 卡片内的仓库选择器，为 Continue 代理选择一个默认工作仓库。
+
+  </Step>
+
+</Steps>
+
+## 使用
+
+要启动代理，提及 `@Continue` 并附带简短的任务描述。
+
+### 线程上下文
+
+当您在 **Slack 线程** 中提及 `@Continue` 时，Continue 会自动将整个对话用作上下文。这意味着您的代理从一开始就具有完整的情境感知能力。
+
+如果您发送 **新消息**（不是回复），Continue 只会将该单条消息视为上下文。
+将此用于快速的独立请求。
+
+<Tip>
+
+  提供清晰、详细的提示，帮助 Continue 理解您的需求：
+
+  ✅ **好示例**：`@Continue 修复 /api/v1/auth/login 中的身份验证超时问题。用户在 5 分钟后被登出，而不是预期的 30 分钟。`
+
+  ❌ **差示例**：`@Continue 修复 auth`
+
+</Tip>
+
+<Accordion title="仓库选择">
+
+  Continue 按照以下优先级确定要工作的仓库：
+
+  1. **在消息中指定**：在您的消息中添加 `repo=repo-name`：
+
+  ```
+  @Continue repo=my-app 修复登录验证错误
+  ```
+
+  <Tip>
+
+    确保仓库名称与 Continue GitHub 应用有权访问的 GitHub 仓库匹配。
+
+  </Tip>
+
+  2. **默认仓库**：使用在集成设置中设置的默认仓库
+
+  3. **交互式选择**：如果未找到仓库，Continue 将跟进一个下拉菜单让您选择仓库
+
+</Accordion>
+
+### 发送后续消息
+
+创建代理后，您可以通过在同一线程中提及 `@Continue` 来发送其他消息：
+
+```
+@Continue 还请为边缘情况添加错误处理
+```
+
+Continue 会将您的消息转发到现有的代理会话，而不是创建一个新的会话。
+
+## 监控代理进度
+
+点击 Slack 中的代理链接，在 [Mission Control](https://hub.continue.dev/agents) 中查看代理的进度。
+
+您也可以点击代理页面中的 Slack 图标返回到 Slack 消息。
+
+## 断开连接
+
+要移除 Slack 集成：
+
+1. 前往 [hub.continue.dev/settings/integrations](https://hub.continue.dev/settings/integrations)
+2. 找到您的 Slack 集成
+3. 点击"断开连接"
+
+## 支持
+
+<Warning>
+
+  Slack 集成正在积极开发中。我们很乐意听取您的反馈：
+  - 报告问题：[GitHub Issues](https://github.com/continuedev/continue/issues)
+  - 功能请求：[GitHub Discussions](https://github.com/continuedev/continue/discussions)
+
+</Warning>
+
+## 相关资源
+
+<CardGroup cols={2}>
+
+  <Card title="代理介绍" icon="robot" href="../../agents/intro">
+
+    了解 Continue 代理
+
+  </Card>
+
+  <Card title="GitHub 集成" icon="github" href="./github">
+
+    添加 GitHub 集成以创建问题和 PR
+
+  </Card>
+
+</CardGroup>

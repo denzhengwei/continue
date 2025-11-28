@@ -1,0 +1,111 @@
+---
+title: "故障排除"
+description: "解决 Continue 常见问题的综合指南，包括日志、键盘快捷键、网络问题、模型能力和扩展配置故障排除"
+---
+
+1. [检查日志](#check-the-logs)
+2. [尝试最新的预发布版本](#download-the-latest-pre-release)
+3. [下载旧版本](#download-an-older-version)
+4. [解决键盘快捷键问题](#keyboard-shortcuts-not-resolving)
+5. [MCP 服务器连接问题](#mcp-server-connection-issues)
+6. [查看常见问题解答](/faqs)
+
+## 检查日志
+
+要解决许多问题，第一步是阅读日志以找到相关的错误消息。为此，请按照以下步骤操作：
+
+### VS Code
+
+#### 控制台日志
+
+<Info>
+  为了查看包含额外信息的调试日志，请点击顶部显示 "Default levels"
+  的下拉菜单并选择 "Verbose"。
+</Info>
+
+1. 对于 MacOS，使用 `cmd` + `shift` + `P`；对于 Windows，使用 `ctrl` + `shift` + `P`
+2. 搜索并选择 "Developer: Toggle Developer Tools"
+3. 这将打开 [Chrome DevTools 窗口](https://developer.chrome.com/docs/devtools/)
+4. 选择 `Console` 选项卡
+5. 阅读控制台日志
+
+#### 提示日志（Continue 控制台）
+
+要查看提示日志/分析，您可以启用 Continue 控制台。
+
+1. 打开 VS Code 设置（`cmd/ctrl` + `,`）
+2. 搜索设置 "Continue: Enable Console" 并启用它
+3. 重新加载窗口
+4. 使用命令面板（`cmd/ctrl` + `shift` + `P`）打开 Continue 控制台，搜索 "Continue: Focus on Continue Console View"
+
+![Continue Console](/images/images/continue-console-d387a10c2918c117c6c253a3b5f18c22.png)
+
+### JetBrains
+
+打开 `~/.continue/logs/core.log` 查看 Continue 插件的日志。最新的日志位于文件底部。
+
+一些与 JetBrains 相关的日志也可以通过点击 "Help" > "Show Log in Explorer/Finder" 找到。
+
+## 下载最新的预发布版本
+
+### VS Code
+
+我们不断对 Continue 进行修复和改进，但最新的更改会在 "预发布" 版本中保留大约一周，以便我们测试其稳定性。如果您遇到问题，可以通过以下方式尝试预发布版本：在 VS Code 中打开 Continue 扩展页面，然后选择 "Switch to Pre-Release"，如下所示。
+
+![Pre-Release](/images/images/prerelease-9bed93e846914165d30a3b227a680d9b.png)
+
+### JetBrains
+
+在 JetBrains 上，"预发布" 通过他们的 Early Access Program (EAP) 渠道进行。要下载最新的 EAP 版本，请启用 EAP 渠道：
+
+1. 打开 JetBrains 设置（`cmd/ctrl` + `,`）并转到 "Plugins"
+2. 点击顶部的齿轮图标
+3. 选择 "Manage Plugin Repositories..."
+4. 添加 "[https://plugins.jetbrains.com/plugins/eap/list](https://plugins.jetbrains.com/plugins/eap/list)" 到列表中
+5. 现在您将始终能够从市场下载最新的 EAP 版本
+
+## 下载旧版本
+
+如果您已经尝试了所有方法，报告了错误，知道以前的版本对您有效，并且正在等待回复，您可以尝试下载扩展的旧版本。
+
+对于 VS Code，所有版本都托管在 Open VSX Registry [此处](https://open-vsx.org/extension/Continue/continue)。下载扩展后（将是一个 .vsix 文件），您可以按照 [此处](https://code.visualstudio.com/docs/editor/extension-gallery#_install-from-a-vsix) 的说明手动安装它。
+
+您可以在 JetBrains 的 [市场](https://plugins.jetbrains.com/plugin/22707-continue) 上找到旧版本的 JetBrains 扩展，该市场将引导您从磁盘安装。
+
+## 键盘快捷键无法解析
+
+如果您的键盘快捷键无法解析，您可能有其他命令优先于 Continue 快捷键。您可以在 IDE 的配置中查看是否是这种情况，并更改您的快捷键映射。
+
+- [VSCode 键盘快捷键文档](https://code.visualstudio.com/docs/getstarted/keybindings)
+- [IntelliJ 键盘快捷键文档](https://www.jetbrains.com/help/idea/configuring-keyboard-and-mouse-shortcuts.html)
+
+## MCP 服务器连接问题
+
+### macOS 上的 "spawn ENAMETOOLONG" 错误
+
+如果您在 macOS 上使用 MCP 服务器时看到类似 `Failed to connect to "<MCP Server Name>"` 并带有 `Error: spawn ENAMETOOLONG` 的错误，这是由于生成 MCP 进程时环境过大导致的。
+
+**解决方法：** 使用命令的完整路径，而不是依赖 PATH 解析：
+
+```yaml
+mcpServers:
+  - name: Memory MCP server
+    command: /usr/local/bin/npx # 使用完整路径而不仅仅是 "npx"
+    args:
+      - -y
+      - "@modelcontextprotocol/server-memory"
+```
+
+要查找系统上命令的完整路径：
+
+- 对于 `npx`：运行 `
+which npx`
+- 对于 `docker`：运行 `which docker`
+- 对于 `uv`/`uvx`：运行 `which uv` 或 `which uvx`
+
+此问题通常影响具有大型开发环境的 macOS 用户，正在 [#7870](https://github.com/continuedev/continue/issues/7870) 和 [#6699](https://github.com/continuedev/continue/issues/6699) 中跟踪。
+
+
+## 仍然有问题？
+
+您还可以加入我们的 Discord 社区 [此处](https://discord.gg/vapESyrFmJ) 获取额外支持和讨论。或者，您可以 [此处](https://github.com/continuedev/continue/issues/new?assignees=&labels=bug&projects=&template=bug-report-%F0%9F%90%9B.md&title=) 创建 GitHub 问题，提供您的问题详情，我们将能够更快地帮助您。

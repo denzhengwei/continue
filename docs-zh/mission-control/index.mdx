@@ -1,0 +1,163 @@
+---
+title: "Continue Mission Control"
+description: "您的 Continue 指挥中心。创建任务、设置工作流、管理代理、连接集成并与团队共享——所有功能都集中在一个地方。"
+sidebarTitle: "概述"
+---
+
+## 在 Mission Control 中您可以做什么
+
+Mission Control 是开发者和团队使用 Continue 为日常编码工作流提供动力的地方。从快速的一次性任务到完全自动化的管道，一切都从这里开始。
+
+<CardGroup cols={4}>
+  <Card title="创建和运行任务" icon="list" href="/mission-control/tasks">
+    触发您的 AI 代理并查看或批准结果。
+  </Card>
+   <Card title="管理您的代理" icon="robot" href="/agents/intro">
+        在仓库之间创建、配置和监控您的自定义代理。
+  </Card>
+ <Card title="设置工作流" icon="clock" href="/mission-control/workflows">
+    安排定期任务、连接 Webhook 以自动触发代理，或添加
+  </Card>
+    <Card title="连接集成" icon="plug" href="/mission-control/integrations">
+    链接 GitHub、Slack 和 Sentry 以增强您的任务和工作流。
+  </Card>
+</CardGroup>
+
+## 收件箱：一个用于分类、分配和采取行动的地方
+
+<Info>
+收件箱是您团队的中央队列，用于所有 AI 驱动的任务、代理活动以及 Sentry 和 Snyk 等一流集成。它为开发者提供了一个共享的地方来审查工作、委派责任和启动后续任务——所有这些都无需离开 Mission Control。
+</Info>
+
+<CardGroup cols={4}>
+  <Card title="统一视图" icon="list">
+    在一个地方查看所有传入的任务、Sentry 警报、Snyk 漏洞和工作流输出。
+  </Card>
+
+  <Card title="强大的过滤" icon="filter">
+    按代理、仓库、集成、创建者、状态或时间对收件箱进行筛选，以显示当前重要的内容。
+  </Card>
+
+  <Card title="明确的所有权" icon="user-check">
+    将会话分配给队友，使责任明确，审查工作顺利进行。
+  </Card>
+
+  <Card title="快速采取行动" icon="zap">
+    直接从收件箱启动后续任务、调查错误或生成修复——无需上下文切换。
+  </Card>
+</CardGroup>
+
+### 一流的集成选项卡
+
+有些信号值得拥有自己的专用视图。当您连接集成时：
+
+<AccordionGroup>
+<Accordion title="Sentry">
+  查看按项目组织的错误事件，包括发生次数、首次/最后一次出现时间戳，以及一键式 **解决** 操作，可启动代理进行调查或生成修复。
+</Accordion>
+
+<Accordion title="Snyk">
+  审查高严重性漏洞，检查 CVSS 评分，并触发代理来修补或升级依赖项。
+</Accordion>
+</AccordionGroup>
+
+## 监控和洞察
+
+<Info>
+实时跟踪性能、在组织中共享配置，并监控代理活动。
+</Info>
+
+<CardGroup cols={3}>
+
+  <Card title="指标" icon="chart-column" href="/mission-control/metrics">
+    衡量代理的成功率、PR 活动和干预趋势。
+  </Card>
+
+  <Card title="组织共享" icon="users" href="/mission-control/governance/org-permissions">
+    使用内置的访问控制与队友共享代理和工作流。
+  </Card>
+
+  <Card title="代理监控" icon="radar" href="/agents/overview#monitoring">
+    查看每个代理会话的活动运行、日志和结果。
+  </Card>
+
+</CardGroup>
+---
+
+
+## Mission Control 背后的组件
+
+Mission Control 使用您配置的组件为代理、任务和工作流提供动力：
+代理由可重用的组件构建，您可以创建、共享和自定义这些组件：
+
+<CardGroup cols={2}>
+
+  <Card title="模型" icon="cube">
+
+    来自各种提供商（OpenAI、Anthropic 等）的大型语言模型，配置用于特定角色，如聊天、自动完成或编辑
+
+  </Card>
+
+  <Card title="MCP" icon="wrench">
+
+    模型上下文协议服务器，提供工具和功能，如数据库访问、网络搜索或自定义函数
+
+  </Card>
+
+  <Card title="规则" icon="shield">
+
+    塑造 AI 行为的指南——编码标准、约束或针对您领域的特定指令
+
+  </Card>
+
+  <Card title="提示词" icon="message-square">
+
+    用于常见任务的可重用指令，针对特定工作流或编码模式进行了优化
+
+  </Card>
+
+</CardGroup>
+
+<Tip>
+
+  组件是代理的构建块，您可以创建新组件或从现有组件重新混合。当您在 Mission Control 中创建组件时，它会根据您设置的权限可用：个人、公共或组织。
+
+</Tip>
+
+
+<Accordion title="组件输入">
+
+有些组件可以通过模板接收值（包括密钥）作为输入。对于用户需要设置的值，您可以使用模板变量（例如 `${{ inputs.API_KEY}}`）。然后，用户可以在其代理或配置的 `with` 子句中设置 `API_KEY: ${{ secrets.MY_API_KEY }}`。
+
+<Info>
+**在 `secrets.` 和 `inputs.` 之间选择**
+
+为您的代理创建组件时：
+- 当您希望用户能够自定义使用哪个密钥时，在定义中使用 `${{ inputs.INPUT_NAME }}`
+- 然后用户将在 `with` 子句中使用 `${{ secrets.SECRET_NAME }}` 映射自己的密钥
+
+对于个人或一次性配置，您可以跳过输入层，直接引用 `${{ secrets.SECRET_NAME }}`。
+</Info>
+</Accordion>
+
+---
+## 开始使用
+<Frame>
+
+
+<CardGroup cols={3}>
+
+  <Card title="创建任务" icon="plus" href="https://hub.continue.dev">
+    从提示词开始，按需运行代理。
+  </Card>
+
+  <Card title="构建工作流" icon="clock" href="https://hub.continue.dev/workflows">
+    使用 cron 计划或 Webhook 自动化您的任务。
+  </Card>
+
+  <Card title="添加集成" icon="workflow" href="https://hub.continue.dev/integrations">
+    连接 GitHub、Slack 和 Sentry 以扩展您的代理。
+  </Card>
+
+</CardGroup>
+</Frame>

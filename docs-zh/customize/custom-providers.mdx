@@ -1,0 +1,255 @@
+---
+title: "上下文提供程序"
+description: "上下文提供程序允许您键入 '@' 并查看可以作为上下文提供给 LLM 的内容下拉列表。每个上下文提供程序都是一个插件，这意味着如果您想要引用此处未显示的某些信息源，您可以请求（或构建！）一个新的上下文提供程序。"
+---
+
+例如，假设您正在解决一个新的 GitHub Issue。您键入 '@Issue' 并选择您正在处理的那个。Continue 现在可以看到问题标题和内容。您还知道该问题与文件 'readme.md' 和 'helloNested.py' 相关，因此您键入 '@readme' 和 '@hello' 来查找并选择它们。现在这 3 个"上下文项"与您的其他输入一起内联显示。
+
+![上下文项](/images/customize/images/context-provider-example-0c96ff77286fa970b23dddfdc1fa986a.png)
+
+## 内置上下文提供程序
+
+您可以在配置文件中添加任何内置的上下文提供程序，如下所示：
+
+### @File 上下文提供程序 – 引用工作区中的文件
+
+引用当前工作区中的任何文件。
+
+config.yaml
+
+```
+context:  - provider: file
+```
+
+### @Code 上下文提供程序 – 引用函数和类
+
+引用整个项目中的特定函数或类。
+
+config.yaml
+
+```
+context:  - provider: code
+```
+
+### @Git Diff 上下文提供程序 – 引用分支更改
+
+引用您对当前分支所做的所有更改。如果您想总结您所做的工作或在提交前要求对您的工作进行一般审查，这很有用。
+
+config.yaml
+
+```
+context:  - provider: diff
+```
+
+### @Current File 上下文提供程序 – 引用活动文件
+
+引用当前打开的文件。
+
+config.yaml
+
+```
+context:  - provider: currentFile
+```
+
+### @Terminal 上下文提供程序 – 引用最后一个终端命令和输出
+
+引用您在 IDE 终端中运行的最后一个命令及其输出。
+
+config.yaml
+
+```
+context:  - provider: terminal
+```
+
+### @Docs 上下文提供程序 – 引用文档站点内容
+
+引用任何文档站点的内容。
+
+config.yaml
+
+```
+context:  - provider: docs
+```
+
+请注意，这只会启用 `@Docs` 上下文提供程序。
+
+要使用它，您需要在配置文件中添加一个文档站点。有关更多信息，请参阅 [文档](/customize/overview#documentation-context) 页面。
+
+### @Open 上下文提供程序 – 引用所有打开的文件或固定的文件
+
+引用所有打开文件的内容。将 `onlyPinned` 设置为 `true` 以仅引用固定文件。
+
+config.yaml
+
+```
+context:
+  - provider: open
+    params:
+      onlyPinned: true
+```
+
+### @Web 上下文提供程序 – 引用相关网页
+
+引用来自网络的相关页面，根据您的输入自动确定。
+
+可选地，设置 `n` 以限制返回的结果数量（默认为 6）。
+
+config.yaml
+
+```
+context:
+  - provider: web
+    params:
+      n: 5
+```
+
+### @Codebase 上下文提供程序 – 引用相关代码库片段
+
+引用代码库中最相关的片段。
+
+config.yaml
+
+```
+context:
+  - provider: codebase
+```
+
+在此处阅读有关索引和检索的更多信息 [/customize/overview#codebase-context]。
+
+### @Folder 上下文提供程序 – 引用特定文件夹中的代码
+
+使用与 `@Codebase` 相同的检索机制，但仅在单个文件夹上使用。
+
+config.yaml
+
+```
+context:  - provider: folder
+```
+
+### @Search 上下文提供程序 – 引用代码搜索结果
+
+引用代码库搜索的结果，就像您从 VS Code 搜索中获得的结果一样。
+
+config.yaml
+
+```
+context:
+  - provider: search
+    params:
+      maxResults: 100 # 可选，默认为 200
+```
+
+此上下文提供程序由 [ripgrep](https://github.com/BurntSushi/ripgrep) 提供支持。
+
+### @Url 上下文提供程序 – 引用 URL 内容
+
+引用给定 URL 的 markdown 转换内容。
+
+config.yaml
+
+```
+context:
+  - provider: url
+```
+
+### @Clipboard 上下文提供程序 – 引用剪贴板项
+
+引用最近的剪贴板项
+
+config.yaml
+
+```
+context:
+  - provider: clipboard
+```
+
+### @Tree 上下文提供程序 – 引用工作区文件结构
+
+引用当前工作区的结构。
+
+config.yaml
+
+```
+context:
+  - provider: tree
+```
+
+### @Problems 上下文提供程序 – 引用当前文件中的问题
+
+获取当前文件中的问题。
+
+config.yaml
+
+```
+context:
+  - provider: problems
+```
+
+### @Debugger 上下文提供程序 – 引用调试器局部变量
+
+引用调试器中局部变量的内容。目前仅在 VS Code 中可用。
+
+config.yaml
+
+```
+context:
+  - provider: debugger
+    params:
+      stackDepth: 3
+```
+
+使用该线程调用栈的前 _n_ 个级别（默认为 3）。
+
+### @Repository Map 上下文提供程序 – 引用代码库大纲和签名
+
+引用您的代码库的大纲。默认情况下，签名与文件一起包含在仓库映射中。
+
+`includeSignatures` 参数可以设置为 false 以排除签名。对于大型代码库和/或显著减少上下文大小，这可能是必要的。如果禁用索引，则不会包含签名。
+
+config.yaml
+
+```
+context:
+  - provider: repo-map
+    params:
+      includeSignatures: false # 默认 true
+```
+
+提供文件列表以及这些文件中顶级类、函数和方法的调用签名。这有助于模型更好地理解特定代码段与代码库其余部分的关系。
+
+在出现的子菜单中，您可以选择 `Entire codebase`，或指定一个子文件夹来生成仓库映射。
+
+此上下文提供程序的灵感来自 [Aider 的仓库映射](https://aider.chat/2023/10/22/repomap.html)。
+
+### @Operating System 上下文提供程序 – 引用系统架构和平台
+
+引用当前操作系统的架构和平台。
+
+config.yaml
+
+```
+context:
+  - provider: os
+```
+
+### 在 Continue 中使用模型上下文协议 (MCP)
+
+[模型上下文协议](https://modelcontextprotocol.io/introduction) 是 Anthropic 提出的一项标准，用于统一提示词、上下文和工具使用。Continue 通过 MCP 上下文提供程序支持任何 MCP 服务器。阅读他们的 [快速入门](https://modelcontextprotocol.io/quickstart) 以了解如何设置本地服务器，然后像这样设置您的配置：
+
+config.yaml
+
+```
+mcpServers:
+  - name: My MCP Server
+    command: uvx
+    args:
+      - mcp-server-sqlite
+      - --db-path
+      - /Users/NAME/test.db
+```
+
+然后您将能够键入 "@" 并在上下文提供程序下拉列表中看到 "MCP"。
+
+### 如何在 Continue 中请求新的上下文提供程序
+
+没有看到您想要的？在此处创建一个问题 [here](https://github.com/continuedev/continue/issues/new?assignees=TyDunn&labels=enhancement&projects=&template=feature-request-%F0%9F%92%AA.md&title=) 来请求新的上下文提供程序。

@@ -1,0 +1,242 @@
+---
+title: "Continue CLI (cn) 概述"
+description: "用于自动化编码任务、脚本编写和无头开发工作流的命令行界面，具有 Continue 的 AI 编码能力"
+sidebarTitle: "概述"
+---
+
+<Frame>
+  <img src="/images/cn-demo.gif" />
+</Frame>
+
+**Continue 使开发者能够通过持续 AI 更快地交付产品。**
+
+<Tip>
+  根据描述构建功能。调试和修复问题。导航任何代码库。
+  自动化繁琐任务。
+</Tip>
+
+## 30 秒内开始使用
+
+先决条件：
+
+- [Node.js 18 或更新版本](https://nodejs.org/en/download/)
+- 一个 [Continue Mission Control](https://hub.continue.dev) 账户（推荐）或本地配置
+
+```bash npm
+# 安装 Continue CLI
+npm install -g @continuedev/cli
+
+# 导航到您的项目
+
+cd your-awesome-project
+
+# 使用 Continue 开始编码
+
+cn
+
+# 首次使用时会提示您进行设置
+
+```
+
+就是这样！您已经准备好开始使用 Continue CLI 进行自动化了。
+
+[继续 CLI 快速入门 →](/cli/quick-start)
+
+## 使用 Continue CLI 的两种方式
+
+Continue CLI 提供两种不同的模式，专为不同的工作流设计：
+
+### TUI 模式：交互式开发
+
+**非常适合探索、调试和迭代 AI 工作流**
+
+```bash
+cn
+> @src/components/UserProfile.js 审查此组件的安全问题
+> 生成全面的单元测试
+> 建议性能改进
+```
+
+- 与您的代码库进行**交互式对话**
+- **迭代和优化**提示词和方法
+- **探索和理解**复杂代码库
+- **非常适合实验**和学习
+
+### 无头模式：生产自动化
+
+**非常适合 CI/CD、自动化和可靠的工作流**
+
+```bash
+cn -p "为暂存更改生成符合约定的提交消息"
+cn -p "审查拉取请求更改中的安全漏洞"
+cn -p "根据最近的代码更改更新文档"
+```
+
+- **单命令执行**用于自动化
+- **可靠、可重复的结果**用于生产使用
+- **CI/CD 和管道集成**
+- **Git 钩子和自动化工作流**
+
+<Info>
+  **TUI 与无头模式中的工具权限**
+
+  Continue CLI 工具有三个权限级别：
+  - **allow**：自动执行，无需确认
+  - **ask**：执行前提示用户确认（例如，`writeFile`、`runTerminalCommand`）
+  - **exclude**：AI 无法使用该工具
+
+  **在无头模式下**，具有 "ask" 权限的工具会被自动排除，以防止 AI 看到它无法调用的工具。这确保了可靠的自动化，无需用户干预。
+
+  **在 TUI 模式下**，具有 "ask" 权限的工具可用，当 AI 尝试使用它们时会提示确认。
+
+  💡 **提示**：如果您的工作流需要需要确认的工具（如文件写入或终端命令），请使用 TUI 模式。对于具有只读操作的完全自动化工作流，请使用无头模式。
+</Info>
+
+### 开发工作流：TUI → 无头
+
+<Tip>
+  **专业提示**：在 TUI 模式下开始迭代您的 AI 代理。一旦
+  您有了可靠工作的工作流，将其部署为持续 AI
+  自动化。
+</Tip>
+
+1. **在 TUI 模式下实验**以完善您的代理
+2. **交互式测试不同方法**，直到获得一致的结果
+3. **将成功的工作流转换**为自动化的持续 AI 命令
+4. **在生产环境中部署**，对您经过验证的方法充满信心
+
+## 开发者为什么喜欢 Continue CLI
+
+- **在您的终端中工作**：不是另一个聊天窗口。不是另一个 IDE。Continue CLI 在您已经工作的地方与您见面，使用您已经喜欢的工具。
+- **采取行动**：Continue CLI 可以直接编辑文件、运行命令和创建提交。需要更多？查看我们的 [MCP](/customize/deep-dives/mcp)。
+- **自动化任务**：从 PostHog 数据创建问题，自动为问题分配标签，等等。在您的开发机器上用单个命令完成所有这些，或者在 CI 中自动完成。
+- **灵活的开发流程**：从交互式开始，然后自动化经过验证的工作流。
+
+## 关键功能
+
+### 上下文工程
+
+- 使用 `@` 引用文件并提供上下文
+- 使用 `/` 运行斜杠命令以执行特定任务
+- 访问与 IDE 扩展相同的上下文提供程序
+
+### 工具集成
+
+- 文件编辑和创建
+- 终端命令执行
+- 代码库理解和分析
+- Git 集成
+- 网络搜索和文档访问
+
+### 模型灵活性
+
+- 使用 `/model` 命令在模型之间切换
+- 使用 `config.yaml` 中配置的任何模型
+- 访问 Continue Mission Control 模型和配置
+
+## Continue Mission Control 集成
+
+Continue CLI 与 [Continue Mission Control](https://hub.continue.dev) 无缝集成，用于：
+
+### API 访问
+
+获取用于自动化工作流的 API 密钥：
+
+1. 访问 [Continue Mission Control API Keys](https://hub.continue.dev/settings/api-keys)
+2. 创建新的 API 密钥
+3. 与 `cn login` 一起使用或在您的自动化脚本中使用
+
+### 密钥管理
+
+为 CLI 工作流存储安全凭据：
+
+1. 访问 [Continue Mission Control Secrets](https://hub.continue.dev/settings/secrets)
+2. 添加您的 API 密钥和敏感数据
+3. 在配置中使用 `${{ secrets.SECRET_NAME }}` 引用
+
+### 配置同步
+
+- 云管理的配置自动同步
+- 在团队成员之间共享配置
+- 您的 AI 工作流的版本控制
+
+## 常见用例
+
+### TUI 模式示例
+
+**交互式开发和探索：**
+
+<CodeGroup>
+```bash 代码库探索
+# 开始交互式会话
+cn
+> @src/components 查找所有未使用的 React 组件
+> /explain 这个代码库中的身份验证是如何工作的？
+> @auth/ 这里使用了什么安全模式？
+```
+
+```bash 迭代调试
+# 交互式调试问题
+cn
+> @tests/auth.test.js 这个测试失败了，帮我理解原因
+> @src/auth/middleware.js 让我们检查这个中间件
+> /debug 什么可能导致超时错误？
+```
+
+```bash 工作流开发
+# 开发和测试自动化工作流
+cn
+> @package.json @CHANGELOG.md 生成发布说明模板
+> # 测试和优化方法
+> # 一旦工作正常，转换为：cn -p "生成发布说明"
+```
+
+</CodeGroup>
+
+### 无头模式示例
+
+**生产自动化和脚本编写：**
+
+<CodeGroup>
+```bash Git 自动化
+# 生成提交消息
+cn -p "为当前更改生成符合约定的提交消息"
+
+# 代码审查自动化
+
+cn -p "审查当前 git 更改中的错误并建议改进"
+```
+
+```bash CI/CD 集成
+# 在您的管道脚本中
+cn -p "分析测试失败并建议修复"
+
+# 自动化文档更新
+cn -p "@README.md 根据最近的更改更新此文档"
+```
+
+```bash 问题管理
+# 从 PostHog 数据创建 GitHub 问题
+cn -p "@posthog-data.json 为此会话数据中发现的 UX 问题创建 GitHub 问题"
+
+# 自动化安全审计
+cn -p "扫描代码库中的潜在安全漏洞"
+```
+
+</CodeGroup>
+
+## 下一步
+
+<CardGroup cols={3}>
+  <Card title="CLI 快速入门" href="/cli/quick-start">
+    学习基本命令和常见工作流
+  </Card>
+
+<Card title="安装指南" href="/cli/install">
+  安装 Continue CLI 并设置您的环境
+</Card>
+
+  <Card title="CLI 工作流" href="/guides/overview#continuous-ai">
+    特定任务的教程和示例
+  </Card>
+</CardGroup>

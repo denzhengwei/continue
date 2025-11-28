@@ -1,0 +1,271 @@
+---
+title: "如何在 Continue 中创建和管理规则"
+description: "规则用于为代理模式、聊天模式和编辑模式请求的模型提供系统消息指令"
+keywords: [rules, system, prompt, message]
+sidebarTitle: "规则"
+---
+
+规则为 [代理模式](../../ide-extensions/agent/quick-start)、[聊天](../../ide-extensions/chat/quick-start) 和 [编辑](../../ide-extensions/edit/quick-start) 请求的模型提供指令。
+
+<Info>
+  规则不包含在 [自动补全](./autocomplete) 或 [应用](../model-roles/apply) 中。
+</Info>
+
+## 规则在 Continue 中的工作原理
+
+您可以通过点击主工具栏上方的钢笔图标查看当前规则：
+
+![规则输入工具栏部分](/images/notch-rules.png)
+
+为了形成系统消息，规则会按照它们在工具栏中出现的顺序用换行符连接。这包括基础聊天系统消息（[见下文](#如何自定义聊天系统消息)）。
+
+## 了解 Hub 与本地规则集成
+
+<Warning>
+  **重要提示：** 在不同位置创建的规则行为不同，具有不同的同步模式。
+</Warning>
+
+Continue 支持两种具有不同行为的规则类型：
+
+<Columns cols={2}>
+<Card title="本地规则" icon="folder">
+- **位置**：工作区中的 `.continue/rules` 文件夹
+- **可见性**：使用 Hub 配置时自动可见
+- **创建**：VSCode 中的添加规则按钮或手动创建文件
+- **文件管理**：创建您可以直接编辑的实际 `.md` 文件
+</Card>
+
+<Card title="Hub 规则" icon="cloud">
+- **位置**：存储在 Continue Mission Control 上，在 config.yaml 中引用
+- **可见性**：仅在助手配置中引用时出现
+- **创建**：直接在 Hub 上创建或从本地规则复制
+- **文件管理**：不创建本地文件，通过 Hub 界面管理
+</Card>
+</Columns>
+
+### 规则如何应用
+
+使用 Continue 时，规则按以下顺序加载：
+
+1. **Hub 助手规则**（如果使用基于 Hub 的助手）
+2. **引用的 Hub 规则**（通过 config.yaml 中的 `uses:`）
+3. **本地工作区规则**（来自 `.continue/rules` 文件夹）
+4. **全局规则**（来自 `~/.continue/rules` 文件夹）
+
+<Info>
+  **总结**：使用 Hub 配置时，本地规则会自动显示。在配置中引用时，Hub
+  规则会自动显示。
+</Info>
+
+## 快速入门：如何创建您的第一个规则文件
+
+以下是设置新规则文件的快速示例：
+
+1. 在您的工作区顶层创建一个名为 `.continue/rules` 的文件夹
+2. 向此文件夹添加一个名为 `pirates-rule.md` 的文件。
+3. 将以下内容写入 `pirates-rule.md` 并保存。
+
+```md title=".continue/rules/pirates-rule.md"
+---
+name: 海盗规则
+---
+
+- 像海盗一样说话。
+```
+
+现在通过在聊天中询问有关文件的问题来测试您的规则。
+
+![海盗规则测试](/images/pirate-rule-test.png)
+
+## 如何创建规则
+
+### 创建本地规则
+
+可以使用 "添加规则" 按钮在本地添加规则。
+
+![添加本地规则按钮](/images/add-local-rules.png)
+
+<Info>
+**自动创建本地规则**：在代理模式下，如果启用了 `create_rule_block` 工具，您可以提示代理为您创建规则。
+
+例如，您可以说 "为此创建一个规则"，代理将根据您的对话在 `.continue/rules` 中为您创建一个规则。
+
+</Info>
+
+### 创建 Hub 规则
+
+规则也可以在 Continue Mission Control 上创建和管理：
+
+1. **浏览现有规则**：[探索可用规则](https://hub.continue.dev/hub?type=rules)
+2. **创建新规则**：在 Hub 中[创建您自己的规则](https://hub.continue.dev/new?type=block&blockType=rules)
+3. **从本地规则复制**：从 `.continue/rules` 文件复制/粘贴内容以创建 Hub 规则
+
+### 在 Hub 和本地规则之间工作
+
+<Tabs>
+<Tab title="Hub 到 VSCode">
+要在本地设置中使用 Hub 规则：
+
+1. 在您的 `config.yaml` 中引用它们：
+   ```yaml
+   rules:
+     - uses: username/my-hub-rule
+   ```
+2. 规则将自动出现在您的规则工具栏中
+3. **注意**：不会创建本地文件 - 规则仅存在于 Hub 上
+   </Tab>
+
+<Tab title="VSCode 到 Hub">
+要将本地规则移至 Hub：
+
+1. 从您的 `.continue/rules/rule-name.md` 文件复制内容
+2. 转到 [创建新规则](https://hub.continue.dev/new?type=block&blockType=rules)
+3. 粘贴内容并配置规则
+4. （可选）删除本地文件并在您的配置中引用 Hub 规则
+
+<Warning>
+**当前限制**：本地到 Hub 没有自动同步。您必须手动复制/粘贴规则内容。
+</Warning>
+</Tab>
+</Tabs>
+
+### 如何配置规则属性和语法
+
+<Info>
+  规则最初是在 YAML 格式中定义的（如下所示），但我们引入了 Markdown
+  以便于编辑。虽然两者仍然受支持，但我们推荐使用 Markdown。
+</Info>
+
+规则可以是简单文本，用 YAML 配置文件编写，或作为 Markdown (`.md`) 文件。它们可以具有以下属性：
+
+- `name`（YAML 必需）：规则的显示名称/标题
+- `globs`（可选）：当作为上下文提供的文件匹配此 glob 模式时，将包含该规则。这可以是单个模式（例如，`"**/*.{ts,tsx}"`）或模式数组（例如，`["src/**/*.ts", "tests/**/*.ts"]`）。
+- `regex`（可选）：当作为上下文提供的文件及其内容匹配此正则表达式模式时，将包含该规则。这可以是单个模式（例如，`"^import .* from '.*';$"`）或模式数组（例如，`["^import .* from '.*';$", "^export .* from '.*';$"]`）。
+- `description`（可选）：规则的描述。当 `alwaysApply` 为 false 时，代理可能会读取此描述，以确定是否应将规则拉入上下文。
+- `alwaysApply`：确定规则是否始终包含。行为描述如下：
+  - `true`：始终包含，无论文件上下文如何
+  - `false`：如果存在 globs 且匹配文件上下文，或者代理基于其描述决定将规则拉入上下文，则包含
+  - `undefined`（默认行为）：如果不存在 globs 或者存在 globs 且匹配，则包含
+
+<Tabs>
+<Tab title="Markdown">
+```md title="doc-standards.md"
+---
+name: 文档标准
+globs: docs/**/*.{md,mdx}
+alwaysApply: false
+description: 编写和维护 Continue 文档的标准
+---
+
+# Continue 文档标准
+
+- 遵循 Mintlify 文档标准
+- 包含带有 title、description 和 keywords 的 YAML frontmatter
+- 使用一致的标题层次结构，从 h2 (##) 开始
+- 包括相关的 Admonition 组件，用于提示、警告和信息
+- 为图像使用描述性 alt 文本
+- 包含对相关文档的交叉引用
+- 使用相对路径引用其他文档
+- 保持段落简洁易读
+- 使用带有适当语言标签的代码块
+
+````
+</Tab>
+
+<Tab title="YAML">
+```yaml title="doc-standards.yaml"
+name: Documentation Standards
+version: 1.0.0
+schema: v1
+
+rules:
+  - name: Documentation Standards
+    globs: docs/**/*.{md,mdx}
+    alwaysApply: false
+    rule: >
+      - Follow Mintlify documentation standards
+      - Include YAML frontmatter with title, description, and keywords
+      - Use consistent heading hierarchy starting with h2 (##)
+      - Include relevant Admonition components for tips, warnings, and info
+      - Use descriptive alt text for images
+      - Include cross-references to related documentation
+      - Reference other docs with relative paths
+      - Keep paragraphs concise and scannable
+      - Use code blocks with appropriate language tags
+````
+
+</Tab>
+</Tabs>
+
+### 如何设置项目特定规则
+
+您可以通过将 `.continue/rules` 文件夹添加到项目根目录并添加新的规则文件来创建项目特定规则。
+
+规则文件按字典顺序加载，因此您可以用数字为它们添加前缀，以控制它们的应用顺序。例如：`01-general.md`、`02-frontend.md`、`03-backend.md`。
+
+### 示例：如何创建 TypeScript 特定规则
+
+```md title=".continue/rules/typescript.md"
+---
+name: TypeScript 最佳实践
+globs: ["**/*.ts", "**/*.tsx"]
+---
+
+# TypeScript 规则
+
+- 始终使用 TypeScript 接口定义对象形状
+- 谨慎使用类型别名，优先使用接口
+- 为公共 API 包含适当的 JSDoc 注释
+- 使用严格的 null 检查
+- 尽可能使用只读数组和属性
+- 将组件模块化为更小、可重用的部分
+```
+
+## 排查规则问题
+
+### 问题：在不同位置创建的规则不同步
+
+**问题**：您在 Hub 中创建了规则，但在 VSCode 中看不到它们，反之亦然。
+
+**解决方案**：
+
+- **Hub 规则** 仅在使用 `uses:` 语法在 config.yaml 中引用时才会出现
+- **本地规则** 在使用 Hub 配置时会自动出现
+- 目前没有自动双向同步
+
+### 问题："编辑" 链接指向错误位置
+
+**问题**：当您在 VSCode 中点击规则上的 "编辑" 时，它会尝试打开 Hub，即使规则是本地的，或者显示不正确的 URL。
+
+**根本原因**：当您混合使用本地规则和 Hub 规则时，Continue 无法正确确定每个规则的来源。
+
+**解决方法**：
+
+1. **对于本地规则**：直接导航到 `.continue/rules/` 文件夹并编辑 `.md` 文件
+2. **对于 Hub 规则**：直接转到 [Continue Mission Control](https://hub.continue.dev) 上的助手页面并从那里编辑
+3. 跟踪哪些规则是本地的 vs Hub 基于的，以避免混淆
+
+<Info>
+  **已知问题**：此链接准确性问题在 [Linear issue
+  CON-3084](https://linear.app/continue/issue/CON-3084)
+  中进行了跟踪，将在未来更新中修复。
+</Info>
+
+### 问题：规则不显示在助手中
+
+**问题**：您的规则存在，但没有显示在规则工具栏中。
+
+**检查这些**：
+
+1. **文件位置**：确保本地规则在 `.continue/rules/` 中（而不是 `.continue/rule/`）
+2. **文件格式**：规则应为带有适当 YAML frontmatter 的 `.md` 文件
+3. **配置引用**：Hub 规则必须在 `config.yaml` 中引用
+4. **助手类型**：确保您使用的是正确的助手（本地 vs Hub）
+
+### 如何自定义聊天系统消息
+
+Continue 为 [代理模式](../../ide-extensions/agent/quick-start) 和 [聊天](../../ide-extensions/chat/quick-start) 请求包含一个简单的默认系统消息，以帮助模型在其输出中提供可靠的代码块格式。
+
+您可以在工具栏的规则部分（见上文）或在 [源代码中](https://github.com/continuedev/continue/blob/main/core/llm/constructMessages.ts#L4) 查看此消息。
+
+高级用户可以根据需要使用 `chatOptions.baseSystemMessage` 为特定模型覆盖此系统消息。请参阅 [`config.yaml` 参考](/reference#models)。

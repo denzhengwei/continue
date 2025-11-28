@@ -1,0 +1,198 @@
+---
+title: "Sentry 集成"
+description: "通过连接到 Sentry 的 Continue 代理自动分类和解决错误"
+---
+
+## 概述
+
+将 Sentry 连接到 Continue Mission Control，使代理能够自动检测、分析和解决生产环境中的错误。启用 Sentry 后，Continue 可以生成修复问题的 PR，分析错误模式，并维护应用程序健康。
+
+<Card title="Sentry 集成可以做什么" icon="shield-exclamation">
+
+  - 自动生成 PR 来解决新错误
+  - 分析错误模式并识别根本原因
+  - 根据影响和频率对问题进行优先级排序
+  - 创建包含堆栈跟踪的详细错误报告
+  - 监控跨版本的错误趋势
+
+</Card>
+
+## 设置
+
+<Steps>
+
+  <Step title="导航到集成页面">
+
+    前往您的 [集成设置](https://hub.continue.dev/integrations)。
+  </Step>
+
+  <Step title="连接 Sentry">
+
+    点击"连接"并选择 Sentry。您需要以下凭证：
+
+    - **Sentry 组织 Slug**：您的组织名称（例如，"my-company"）
+    - **Auth Token**：来自 Sentry 的内部集成令牌
+    - **Client Secret**：用于 Webhook 签名验证
+
+  </Step>
+
+  <Step title="配置 Sentry 内部集成">
+
+    在您的 Sentry 账户中：
+    1. 创建一个新的 [内部集成](https://docs.sentry.io/product/integrations/integration-platform/)
+    2. 将 Webhook URL 设置为 `https://api.continue.dev/webhooks/sentry`
+    3. 为"Issue and Event"选择"Read and Write"访问权限
+    4. 在 Webhooks 部分选择"issue"并点击保存更改
+    5. 复制 Auth Token 和 Client Secret
+
+  </Step>
+
+  <Step title="将凭证添加到 Mission Control">
+
+    将所有三个值粘贴到集成表单中，然后点击"创建连接"
+
+  </Step>
+
+</Steps>
+
+<Tip>
+
+  **如何获取这些凭证：**
+  1. 在 Sentry 中创建一个新的 **内部集成**
+  2. 将 Webhook URL 设置为 `https://api.continue.dev/webhooks/sentry`
+  3. 为"Issue and Event"选择"Read and Write"访问权限
+  4. 在 Webhooks 部分选择"issue"并点击保存更改
+  5. 在 Sentry URL 中找到您的组织 slug（your-slug.sentry.io）
+  6. 从集成中复制 Auth Token 和 Client Secret
+
+</Tip>
+
+## 在 Mission Control 中运行 Sentry 代理
+
+您可以通过两种方式运行连接到 Sentry 的代理：
+
+### 1. 手动任务
+
+按需触发代理进行错误分析：
+
+1. 前往 [Mission Control Agents](https://hub.continue.dev/agents)
+2. 选择或创建启用 Sentry 的代理
+3. 点击"Run Agent"并提供您的任务描述
+4. 实时监控进度并查看结果
+
+**示例任务：**
+- "分析过去 24 小时内的前 10 个错误"
+- "创建一个 PR 来修复身份验证超时错误"
+- "生成一份关于影响移动用户的错误报告"
+
+### 2. 自动化工作流
+
+设置代理自动运行：
+
+- **Webhook 触发**：当新的 Sentry 错误发生时执行
+- **定时运行**：每日或每周运行错误分析
+- **基于阈值**：当错误率超过限制时触发
+
+<Tip>
+
+  从手动任务开始，完善您的提示词，然后将成功的工作流转换为自动化，以实现持续的错误监控。
+
+</Tip>
+
+## 与 GitHub 集成
+
+将 Sentry 与 GitHub 集成结合使用，实现完整的工作流：
+
+<Steps>
+
+  <Step title="连接两个集成">
+
+    在 Mission Control 中启用 Sentry 和 GitHub 集成
+
+  </Step>
+
+  <Step title="创建统一代理">
+
+    构建一个代理，它可以：
+    - 接收 Sentry 错误通知
+    - 分析错误并找到有问题的代码
+    - 创建包含修复的 PR
+    - 将 PR 链接添加到 Sentry 问题
+
+  </Step>
+
+  <Step title="设置自动化工作流">
+
+    配置代理在新的 Sentry 问题上自动运行
+
+  </Step>
+
+</Steps>
+
+## 监控代理活动
+
+跟踪您的代理的错误解决性能：
+
+1. **在 Mission Control 中查看**：查看所有代理运行及其结果
+2. **检查 Sentry**：验证问题是否正在得到解决
+3. **审查 PR**：确保生成的修复质量
+4. **监控指标**：跟踪解决时间和成功率
+
+
+## 故障排除
+
+<Accordion title="Webhook 未触发">
+
+  **问题**：当新错误发生时，代理未运行
+
+  **解决方案**：
+  - 验证 Sentry 中的 Webhook URL 是否正确
+  - 检查是否在 Webhook 事件中选择了"issue"
+  - 确保 Client Secret 在 Sentry 和 Mission Control 中匹配
+  - 查看 Sentry 中的 Webhook 交付日志
+
+</Accordion>
+
+<Accordion title="代理无法访问 Sentry 数据">
+
+  **问题**：代理在尝试获取问题详情时返回错误
+
+  **解决方案**：
+  - 验证 Auth Token 对"Issue and Event"具有"Read and Write"访问权限
+  - 检查组织 slug 是否正确
+  - 确保令牌未过期
+  - 确认 Sentry 中的项目权限
+
+</Accordion>
+
+<Accordion title="PR 未链接到 Sentry 问题">
+
+  **问题**：生成的 PR 未引用 Sentry 问题
+
+  **解决方案**：
+  - 确保 Sentry 和 GitHub 集成都已连接
+  - 验证代理有权访问这两个服务
+  - 检查代理提示词是否包含链接问题的说明
+  - 查看代理日志中的错误
+
+</Accordion>
+
+## 支持与资源
+
+<CardGroup cols={2}>
+
+  <Card title="Sentry MCP 指南" icon="book-open" href="/guides/sentry-mcp-error-monitoring">
+
+    使用 Sentry 与 Continue 代理的综合指南
+
+  </Card>
+
+  <Card title="GitHub 集成" icon="github" href="/mission-control/integrations/github">
+
+    将 Sentry 与 GitHub 结合使用，实现完整的自动化
+
+  </Card>
+
+</CardGroup>
+
+

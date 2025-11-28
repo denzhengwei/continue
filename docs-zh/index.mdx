@@ -1,0 +1,161 @@
+---
+title: "欢迎使用 Continue"
+icon: book-open
+description: "在 Mission Control、终端和 CI/CD 中创建、运行和自动化 AI 代理"
+---
+
+<Frame>
+  <img src="/images/intro-0c302b9c15b890c251b1ad04586c880f.png" />
+</Frame>
+
+## Mission Control
+
+<Note>用于管理代理、任务、工作流和集成的中央仪表板。</Note>
+
+<CardGroup cols={2}>
+  <Card title="创建任务" icon="plus" href="/mission-control/tasks">
+    使用提示词、工具和规则触发您的代理来完成特定工作。
+
+    <sub>• 手动运行或从收件箱运行</sub><br />
+    <sub>• 与团队成员复用和共享</sub>
+
+  </Card>
+  <Card title="设置工作流" icon="clock" href="/mission-control/workflows">
+    安排定期任务或连接 Webhook 以自动触发代理。
+
+    <sub>• 基于 Cron 或 Webhook 的触发器</sub><br />
+    <sub>• 适用于日常审计或状态检查</sub>
+
+  </Card>
+</CardGroup>
+
+## 集成
+
+<Note>将 Continue 连接到您现有的开发工具，为任务和工作流提供动力。</Note>
+
+<CardGroup cols={2}>
+  <Card
+    title="GitHub"
+    icon="github"
+    href="/mission-control/integrations/github"
+  >
+    为代理启用仓库访问权限，以便读取和创建 PR。
+  </Card>
+  <Card
+    title="Slack"
+    icon="slack"
+    href="/mission-control/integrations/slack-agent"
+  >
+    在 Slack 中提及 <code>@Continue</code> 以触发代理并接收更新。
+  </Card>
+  <Card
+    title="Sentry"
+    icon="alert-triangle"
+    href="/mission-control/integrations/sentry"
+  >
+    自动生成 PR 以修复 Sentry 警报中的新问题。
+  </Card>
+  <Card
+    title="Snyk"
+    icon="shield-check"
+    href="/mission-control/integrations/snyk"
+  >
+    自动检测并修复安全漏洞。
+  </Card>
+</CardGroup>
+
+## Continue CLI
+
+<Note>带有 TUI 和无头模式的终端原生 AI 编码辅助工具。</Note>
+
+<CodeGroup>
+
+    ```bash npm
+    npm install -g @continuedev/cli
+    ```
+
+    ```bash yarn
+    yarn global add @continuedev/cli
+    ```
+
+    ```bash pnpm
+    pnpm add -g @continuedev/cli
+    ```
+
+</CodeGroup>
+
+<CardGroup cols={2}>
+  <Card
+    title="TUI 模式"
+    icon="terminal"
+    href="/cli/overview#tui-mode%3A-交互式开发"
+  >
+    用于开发工作流的交互式终端界面
+
+    <sub>• 自动化构建和重构</sub>
+    <br />
+    <sub>• 预提交钩子和脚本修复</sub>
+    <br />
+    <sub>• 终端优先开发</sub>
+
+  </Card>
+  <Card
+    title="无头模式"
+    icon="server"
+    href="/cli/overview#headless-mode%3A-生产自动化"
+  >
+    用于 CI/CD 和服务器环境的自动化 AI 编码
+
+    <sub>• 在 CI/CD 管道中运行</sub>
+    <br />
+    <sub>• 批量处理和大规模操作</sub>
+    <br />
+    <sub>• 服务器和容器部署</sub>
+
+  </Card>
+</CardGroup>
+
+## IDE 扩展
+
+<Note>用于实时代码编辑和辅助的可选 IDE 扩展。</Note>
+
+<CardGroup cols={2}>
+  <Card
+    title="VS Code"
+    icon="code"
+    href="https://marketplace.visualstudio.com/items?itemName=Continue.continue"
+  >
+    从 VS Code 市场安装
+    <sub>实时编码辅助和重构</sub>
+  </Card>
+  <Card
+    title="JetBrains"
+    icon="jet-fighter"
+    href="https://plugins.jetbrains.com/plugin/22707-continue-extension"
+  >
+    从 JetBrains 插件仓库安装
+    <sub>社区支持自动补全和多文件编辑</sub>
+  </Card>
+</CardGroup>
+
+## 资源
+
+<CardGroup cols={3}>
+  <Card
+    title="Continue Mission Control"
+    icon="globe"
+    href="https://hub.continue.dev/"
+  >
+    创建您的代理、运行任务、添加工作流和集成
+  </Card>
+  <Card
+    title="GitHub 讨论"
+    icon="comments"
+    href="https://github.com/continuedev/continue/discussions"
+  >
+    从社区获取帮助
+  </Card>
+  <Card title="集成" icon="plug" href="/mission-control/integrations">
+    连接 GitHub、Slack、Sentry 和 Snyk 以增强您的自动化能力。
+  </Card>
+</CardGroup>

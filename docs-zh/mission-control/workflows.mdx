@@ -1,0 +1,156 @@
+---
+title: "工作流"
+description: "工作流在特定时间或事件发生时触发代理。"
+---
+
+
+<Info>
+
+  什么是工作流？
+
+  工作流在以下情况下自动在仓库上运行代理：
+  - 达到预定时间（cron）
+  - 发生事件（webhook，例如 GitHub PR）
+
+  使用工作流执行重复或事件驱动的任务，例如：
+  - 每日漏洞扫描
+  - 每周更新日志生成
+  - 响应新的拉取请求或 Sentry 警报
+
+</Info>
+
+---
+
+## 创建工作流
+
+<Steps>
+
+  <Step title="从头开始或使用模板">
+
+    在 Mission Control → Workflows 中，创建一个 [新工作流](https://hub.continue.dev/workflows/new)。
+<AccordionGroup>
+
+  <Accordion title="从空白工作流开始">
+    点击 Create Workflow 从头开始创建工作流。  
+    您将选择仓库、代理、触发器类型以及计划或 webhook。
+  </Accordion>
+
+  <Accordion title="使用工作流模板">
+    选择任何“Try these Workflows”卡片，例如：
+    - _Update agents.md_
+    - _Draft Changelog Updates_
+    - _Solve Snyk Vulnerabilities_
+
+    模板预加载了推荐的代理和计划，以便您可以快速自定义和运行它们。
+  </Accordion>
+
+</AccordionGroup>
+
+  </Step>
+
+  <Step title="命名工作流">
+
+    为您的工作流提供一个清晰、描述性的名称。
+
+    示例：
+    - `早上状态检查`
+    - `每周更新日志草稿`
+    - `每日 Snyk 漏洞扫描`
+
+  </Step>
+
+  <Step title="选择仓库和代理">
+
+    选择：
+
+    - 仓库 – 代理将运行的代码库  
+    - 代理 – 应执行工作的已配置代理（模型、规则、工具、提示）
+
+    <Tip>
+      需要新代理？在 [Mission Control → Agents](https://hub.continue.dev/new?type=agent) 中创建一个，然后返回此屏幕。
+    </Tip>
+
+  </Step>
+
+  <Step title="选择触发器类型">
+
+    选择此工作流应如何运行：
+
+    - Cron – 按计划运行（每日、每周、每小时、自定义）  
+    - Webhook – 当外部系统发送请求时运行（例如 GitHub PR 事件）
+
+  </Step>
+
+  <Step title="配置触发器">
+
+    <AccordionGroup>
+
+      <Accordion title="Cron 工作流">
+
+        对于计划工作流：
+
+        1. 选择 Cron 作为触发器类型  
+        2. 选择一个计划：
+           - 常见预设（例如 UTC 时间周一至周五上午 9 点）
+           - 每小时、每日、每周、每月
+           - 或定义自定义表达式  
+        3.（可选）在文本区域中为此工作流运行添加额外说明。
+
+        示例用例：
+        - 每周一至周五对您的仓库进行早上状态检查  
+        - 每周重构一次 React 组件  
+        - 从最近的提交生成每周更新日志  
+
+      </Accordion>
+
+      <Accordion title="Webhook 工作流">
+
+        对于基于事件的工作流：
+
+        1. 选择 Webhook 作为触发器类型  
+        2.（可选）设置 Secret Header（例如 `X-Webhook-Secret`）  
+        3.（可选）设置 Secret Value（您的外部系统必须发送的令牌）  
+
+        您将收到一个 webhook URL，可从以下位置调用：
+        - GitHub Actions
+        - GitHub webhooks
+        - CI/CD 流水线
+        - 任何可以发送 HTTP 请求的外部系统
+
+        示例用例：
+        - 每当打开拉取请求时运行代理  
+        - 当 Snyk 或 Sentry 检测到问题时启动工作流  
+
+      </Accordion>
+
+    </AccordionGroup>
+
+  </Step>
+
+  <Step title="创建工作流">
+
+    根据您的触发器类型，点击 Create Cron Workflow 或 Create Webhook Workflow。
+
+    您的工作流现在将出现在工作流列表中，并根据其配置的计划或事件开始运行。
+
+  </Step>
+
+</Steps>
+
+## 监控工作流运行
+
+工作流运行显示方式与任务相同：
+
+- 每次执行都会创建一个会话  
+- 工作流出现在您的收件箱中  
+- 您可以打开详细视图查看摘要、差异和日志。
+
+<CardGroup>
+  <Card title="立即创建工作流" icon="workflow" href="https://hub.continue.dev/workflows">
+  </Card>
+
+  <Card title="添加集成" icon="workflow" href="/mission-control/integrations">
+    连接 GitHub、Slack 和 Sentry 以获得更丰富的触发器和操作。
+  </Card>
+
+</CardGroup>

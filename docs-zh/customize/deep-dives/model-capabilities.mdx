@@ -1,0 +1,259 @@
+---
+title: "如何在 Continue 中配置模型能力"
+description: 理解和配置工具和图像支持的模型能力
+keywords: [capabilities, tools, function calling, image input, config]
+sidebarTitle: "模型能力"
+---
+
+Continue 需要了解您的模型支持哪些功能，才能提供最佳体验。本指南解释了模型能力的工作原理以及如何配置它们。
+
+## 什么是模型能力？
+
+模型能力告诉 Continue 模型支持哪些功能：
+
+- **`tool_use`** - 模型是否可以使用工具和函数
+- **`image_input`** - 模型是否可以处理图像
+
+如果没有适当的能力配置，您可能会遇到以下问题：
+
+- 代理模式不可用（需要工具）
+- 工具完全不工作
+- 图像上传被禁用
+
+## Continue 如何检测模型能力
+
+Continue 使用两级系统来确定模型能力：
+
+### 自动检测如何工作（默认）
+
+Continue 根据您的提供商和模型名称自动检测能力。例如：
+
+- **OpenAI**：GPT-4 和 GPT-3.5 Turbo 模型支持工具
+- **Anthropic**：Claude 3.5+ 模型支持工具和图像
+- **Ollama**：大多数模型支持工具，视觉模型支持图像
+- **Google**：所有 Gemini 模型支持函数调用
+
+这对于流行模型效果很好，但可能不涵盖自定义部署或较新的模型。
+
+有关实现细节，请参阅：
+
+- [toolSupport.ts](https://github.com/continuedev/continue/blob/main/core/llm/toolSupport.ts) - 工具能力检测逻辑
+- [@continuedev/llm-info](https://www.npmjs.com/package/@continuedev/llm-info) - 图像支持检测
+
+### 如何手动配置能力
+
+您可以在 `config.yaml` 中为 Continue 无法自动检测的模型添加能力。
+
+<Note>
+  您不能覆盖自动检测 - 只能添加能力。Continue
+  将始终使用其关于您模型的内置知识，以及您指定的任何能力。
+</Note>
+
+```yaml
+models:
+  - name: my-custom-gpt4
+    provider: openai
+    apiBase: https://my-deployment.com/v1
+    model: gpt-4-custom
+    capabilities:
+      - tool_use
+      - image_input
+```
+
+## 何时手动添加能力
+
+在以下情况下添加能力：
+
+1. **使用自定义部署** - 您的 API 端点提供的模型具有与标准版本不同的能力
+2. **使用较新模型** - Continue 尚未识别新发布的模型
+3. **遇到问题** - 自动检测对您的设置不起作用
+4. **使用代理服务** - 某些代理服务会修改模型能力
+
+## 如何配置模型能力（示例）
+
+### 如何添加基本工具支持
+
+为 Continue 无法识别的模型添加工具支持：
+
+```yaml
+models:
+  - name: custom-model
+    provider: openai
+    model: my-fine-tuned-gpt4
+    capabilities:
+      - tool_use
+```
+
+<Info>
+  `tool_use` 能力用于原生工具/函数调用支持。模型必须实际支持工具才能工作。
+</Info>
+
+<Warning>
+  **实验性**：系统消息工具作为实验性功能提供，适用于没有原生工具支持的模型。这些不会自动用作回退，必须显式配置。大多数模型是为原生工具训练的，因此系统消息工具可能效果不佳。
+</Warning>
+
+### 如何处理能力有限的模型
+
+显式设置无能力（自动检测仍将应用）：
+
+```yaml
+models:
+  - name: limited-claude
+    provider: anthropic
+    model: claude-4.0-sonnet
+    capabilities: [] # 空数组不会禁用自动检测
+```
+
+<Warning>
+  空能力数组不会禁用自动检测。Continue
+  仍将检测并使用模型的实际能力。要真正限制模型的能力，您需要使用不支持这些功能的模型。
+</Warning>
+
+### 如何启用多种能力
+
+启用工具和图像支持：
+
+```yaml
+models:
+  - name: multimodal-gpt
+    provider: openai
+    model: gpt-4-vision-preview
+    capabilities:
+      - tool_use
+      - image_input
+```
+
+## 常见配置场景
+
+某些提供商和自定义部署可能需要显式能力配置：
+
+- **OpenRouter**：可能不保留原始模型的能力
+- **自定义 API 端点**：可能具有与标准模型不同的能力
+- **本地模型**：如果使用非标准模型名称，可能需要显式能力
+
+示例配置：
+
+```yaml
+models:
+  - name: custom-deployment
+    provider: openai
+    apiBase: https://custom-api.company.com/v1
+    model: custom-gpt
+    capabilities:
+      - tool_use # 如果支持函数调用
+      - image_input # 如果支持视觉
+```
+
+## 如何排查能力问题
+
+有关排查与能力相关的问题，如代理模式不可用或工具不工作，请参阅 [排查指南](/troubleshooting#agent-mode-is-unavailable-or-tools-aren’t-working)。
+
+## 模型能力的最佳实践
+
+1. **从自动检测开始** - 只有在遇到问题时才覆盖
+2. **更改后测试** - 验证工具和图像是否按预期工作
+3. **保持 Continue 更新** - 较新版本改进了自动检测
+
+请记住：设置能力只会添加到自动检测中。Continue 仍将使用其关于您模型的内置知识，以及您指定的能力。
+
+## 模型能力支持
+
+此矩阵显示哪些模型支持工具使用和图像输入能力。Continue 会自动检测这些能力，但如果需要，您可以覆盖它们。
+
+### OpenAI
+
+| 模型          | 工具使用 | 图像输入 | 上下文窗口 |
+| :------------ | -------- | -------- | ---------- |
+| GPT-5.1       | 是       | 否       | 400k       |
+| GPT-5         | 是       | 否       | 400k       |
+| o3            | 是       | 否       | 128k       |
+| o3-mini       | 是       | 否       | 128k       |
+| GPT-4o        | 是       | 是       | 128k       |
+| GPT-4 Turbo   | 是       | 是       | 128k       |
+| GPT-4         | 是       | 否       | 8k         |
+| GPT-3.5 Turbo | 是       | 否       | 16k        |
+
+### Anthropic
+
+| 模型              | 工具使用 | 图像输入 | 上下文窗口 |
+| :---------------- | -------- | -------- | ---------- |
+| Claude 4 Sonnet   | 是       | 是       | 200k       |
+| Claude 3.5 Sonnet | 是       | 是       | 200k       |
+| Claude 3.5 Haiku  | 是       | 是       | 200k       |
+
+### Cohere
+
+| 模型                | 工具使用 | 图像输入 | 上下文窗口 |
+| :------------------ | -------- | -------- | ---------- |
+| Command A           | 是       | 否       | 256k       |
+| Command A Reasoning | 是       | 否       | 256k       |
+| Command A Translate | 是       | 否       | 8k         |
+| Command A Vision    | 否       | 是       | 128k       |
+
+### Google
+
+| 模型             | 工具使用 | 图像输入 | 上下文窗口 |
+| :--------------- | -------- | -------- | ---------- |
+| Gemini 2.5 Pro   | 是       | 是       | 2M         |
+| Gemini 2.0 Flash | 是       | 是       | 1M         |
+
+### Mistral
+
+| 模型            | 工具使用 | 图像输入 | 上下文窗口 |
+| :-------------- | -------- | -------- | ---------- |
+| Devstral Medium | 是       | 否       | 32k        |
+| Mistral         | 是       | 否       | 32k        |
+
+### DeepSeek
+
+| 模型              | 工具使用 | 图像输入 | 上下文窗口 |
+| :---------------- | -------- | -------- | ---------- |
+| DeepSeek V3       | 是       | 否       | 128k       |
+| DeepSeek Coder V2 | 是       | 否       | 128k       |
+| DeepSeek Chat     | 是       | 否       | 64k        |
+
+### xAI
+
+| 模型                      | 工具使用 | 图像输入 | 上下文窗口 |
+| :------------------------ | -------- | -------- | ---------- |
+| Grok Code Fast 1          | 是       | 是       | 256k       |
+| Grok 4 Fast Reasoning     | 是       | 是       | 2M         |
+| Grok 4 Fast Non-Reasoning | 是       | 是       | 2M         |
+| Grok 4                    | 是       | 是       | 256k       |
+| Grok 3                    | 是       | 是       | 131k       |
+| Grok 3 Mini               | 是       | 是       | 131k       |
+
+### Moonshot AI
+
+| 模型    | 工具使用 | 图像输入 | 上下文窗口 |
+| :------ | -------- | -------- | ---------- |
+| Kimi K2 | 是       | 是       | 128k       |
+
+### Qwen
+
+| 模型              | 工具使用 | 图像输入 | 上下文窗口 |
+| :---------------- | -------- | -------- | ---------- |
+| Qwen Coder 3 480B | 是       | 否       | 128k       |
+
+### Ollama（本地模型）
+
+| 模型           | 工具使用 | 图像输入 | 上下文窗口 |
+| :------------- | -------- | -------- | ---------- |
+| Qwen 3 Coder   | 是       | 否       | 32k        |
+| Qwen 2.5 VL    | 否       | 是       | 128k       |
+| Devstral Small | 是       | 否       | 32k        |
+| Llama 3.1      | 是       | 否       | 128k       |
+| Llama 3        | 是       | 否       | 8k         |
+| Mistral        | 是       | 否       | 32k        |
+| Codestral      | 是       | 否       | 32k        |
+| Gemma 3 4B     | 是       | 是       | 128k       |
+
+### 注意事项
+
+- **工具使用**：函数调用支持（代理模式需要工具）
+- **图像输入**：处理图像
+- **上下文窗口**：模型在单个请求中可以处理的最大令牌数
+
+---
+
+**您的模型缺失或不正确？** 帮助改进此文档！您可以使用下面的链接在 GitHub 上编辑此页面。

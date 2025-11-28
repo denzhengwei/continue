@@ -1,0 +1,228 @@
+---
+title: "代理概述"
+description: "标准化的 AI 工作流，结合提示词、规则和工具来完成特定的、可重复的任务"
+sidebarTitle: "概述"
+---
+
+<Card title="Continue 中的代理" icon="robot">
+  代理是自定义 AI 工作流，结合了提示词、规则和工具（MCP
+  等）来完成特定的、可重复的任务。 它们存在于 Continue Mission Control
+  中，可以从 Mission Control（Web 界面）、TUI 模式或无头自动化执行。
+</Card>
+
+## 什么是代理？
+
+代理让您的团队能够标准化常见工作流，如打开 GitHub PR、总结分析或审计安全。每个代理包括：
+
+### 代理组件
+
+| **组件**       | **描述**                                                                         | **示例**                                                                                     |
+| -------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| **提示词**     | 代理的主要指令，定义了它的功能和行为方式。调用时会附加额外的用户输入。           | 示例提示词："总结正在进行的工作，包括状态、障碍和下一步。使用 Markdown 格式，语气简洁专业。" |
+| **规则**       | 定义指导代理响应的一致标准或行为。规则有助于确保团队使用的可靠性。               | "总结工作时始终包含相关问题或 PR 链接。"                                                     |
+| **工具 / MCP** | 代理可以调用以完成任务的外部系统或集成。MCP（模型上下文协议）通过 API 扩展功能。 | GitHub、PostHog、Supabase                                                                    |
+| **模型**       | 为代理的推理和输出生成提供动力的大型语言模型。                                   | Claude Sonnet 4.5                                                                            |
+| **可见性**     | 确定谁可以查看或使用代理。在创建时控制访问权限。                                 | 公开、组织或私有                                                                             |
+
+<Info>
+  Mission Control 处于测试阶段。请在 [GitHub
+  discussions](https://github.com/continuedev/continue/discussions/8051)
+  中与我们分享任何反馈。
+</Info>
+
+## 运行代理的方式
+
+您可以通过三种主要方式运行代理：
+
+<Tabs>
+  <Tab title="🌐 Mission Control">
+    **交互式 Web 界面**
+    
+    从 Continue Mission Control 触发并实时查看结果。
+    
+    ```bash
+    # 导航到 hub.continue.dev/agents
+    # 点击任何代理上的 "Run Agent"
+    # 监控进度并查看输出
+    ```
+    
+    完美适用于：交互式调试、查看代理输出、团队协作
+  </Tab>
+
+<Tab title="💻 TUI 模式">
+  **交互式终端模式** 从终端启动，进行实时交互和测试。 ```bash cn --agent
+  my-org/github-pr-agent # 打开交互式聊天界面 # 输入您的特定请求 #
+  查看并批准操作 ``` 完美适用于：本地开发、测试提示词、快速一次性任务
+</Tab>
+
+  <Tab title="🤖 无头模式">
+    **自动化执行**
+    
+    自动运行一次性或计划任务，无需交互。
+    
+    ```bash
+    cn -p --agent my-org/snyk-agent "Run weekly security scan" --auto
+    ```
+    
+    完美适用于：CI/CD 管道、计划任务、Webhook 集成
+  </Tab>
+</Tabs>
+
+## 预配置代理
+
+跳过设置，使用我们食谱集合中经过实战测试的代理：
+
+<CardGroup cols={2}>
+  <Card
+    title="🔒 安全扫描"
+    icon="shield-check"
+    href="/guides/snyk-mcp-continue-cookbook"
+  >
+    `continuedev/snyk-continuous-ai-agent` 发现漏洞并打开带有修复的 PR
+  </Card>
+
+  <Card
+    title="🐛 GitHub 管理"
+    icon="github"
+    href="/guides/github-mcp-continue-cookbook"
+  >
+    `continuedev/github-project-manager-agent` 分类问题并管理项目工作流
+  </Card>
+
+  <Card
+    title="📊 分析洞察"
+    icon="chart-bar"
+    href="/guides/posthog-github-continuous-ai"
+  >
+    `continuedev/posthog-continuous-ai-agent` 分析用户数据并创建可操作任务
+  </Card>
+
+  <Card
+    title="⚡ 性能优化"
+    icon="gauge-high"
+    href="/guides/netlify-mcp-continuous-deployment"
+  >
+    `continuedev/netlify-continuous-ai-agent` 监控 Core Web Vitals 并优化部署
+  </Card>
+
+  <Card
+    title="🗄️ 数据库审计"
+    icon="database"
+    href="/guides/supabase-mcp-database-workflow"
+  >
+    `continuedev/supabase-agent` 审计 RLS 安全性并生成迁移
+  </Card>
+
+  <Card
+    title="🔄 数据管道"
+    icon="arrows-rotate"
+    href="/guides/dlt-mcp-continue-cookbook"
+  >
+    `continuedev/dlt-agent` 检查管道并调试加载错误
+  </Card>
+</CardGroup>
+
+<Info>
+  **探索更多代理**：在我们的
+  [指南概述](/guides/overview#mcp-integration-cookbooks)
+  中浏览完整的预配置代理和 MCP 集成食谱集合。
+</Info>
+
+## 协作
+
+代理是组织资产 — 一旦创建，您组织中的每个人都可以使用它们：
+
+| 角色     | 权限                           |
+| -------- | ------------------------------ |
+| **公开** | 使用、创建、重新混合和删除代理 |
+| **组织** | 与您的团队共享代理             |
+| **私有** | 为个人使用创建、编辑和删除代理 |
+
+## 开始使用
+
+<Steps>
+  <Step title="尝试预配置代理">
+    从食谱代理开始，如 `continuedev/github-project-manager-agent`： ```bash cn
+    --agent continuedev/github-project-manager-agent "列出标记为 bug 的开放问题"
+    ```
+  </Step>
+
+  <Step title="使用 TUI 模式练习">
+    在自动化之前在本地测试代理： ```bash cn --agent
+    continuedev/snyk-continuous-ai-agent # 交互式模式 -
+    非常适合学习如何将代理用于您的用例 ```
+  </Step>
+
+  <Step title="创建您的第一个代理">
+    准备好构建自定义工作流了吗？在我们的
+    [创建和编辑指南](/hub/agents/create-and-edit) 中了解如何操作。
+  </Step>
+
+  <Step title="设置自动化">
+    使用无头模式和 Webhook 与 CI/CD 集成，实现持续工作流。
+  </Step>
+</Steps>
+
+## 监控
+
+您可以直接在 **Mission Control** 中监控代理的所有活动。
+
+<AccordionGroup>
+
+<Accordion title="收件箱概述">
+  **收件箱** 显示每个任务或工作流运行，您可以按代理过滤。
+</Accordion>
+
+  <Accordion title="详细会话视图">
+    点击收件箱中的任何会话以打开详细页面。
+
+    每个会话包括：
+    - **摘要** — 代理做了什么以及为什么
+    - **差异** — 生成的代码更改
+    - **日志** — 完整的执行跟踪、工具调用和推理
+
+    这是查看输出、调试问题或确认正确性的最佳方式。
+
+  </Accordion>
+
+</AccordionGroup>
+
+<Info>所有监控都限定在您当前的工作区。</Info>
+
+## 最佳实践
+
+使用云代理的实践（我们称之为持续 AI）需要深思熟虑地设置正确的护栏：
+
+- **从小处开始**：从您确信 Continue 可以完成的任务开始
+- **使用详细提示词**：代理可以运行很长时间，因此请投入精力编写详细说明
+- **先在本地测试**：在部署到生产环境之前，使用 TUI 模式进行练习
+- **团队对齐**：讨论代理使用情况并调整代码审查习惯，以适应更高的 PR 数量
+- **迭代和改进**：愿意根据结果完善提示词
+
+## 下一步
+
+<CardGroup cols={2}>
+  <Card title="创建代理" icon="plus" href="/hub/agents/create-and-edit">
+    使用提示词、规则和工具构建您的第一个自定义代理
+  </Card>
+
+  <Card
+    title="探索食谱"
+    icon="book-open"
+    href="/guides/overview#mcp-integration-cookbooks"
+  >
+    浏览用于安全、分析等的预构建代理
+  </Card>
+
+  <Card title="CLI 指南" icon="terminal" href="/cli/overview">
+    学习从命令行运行代理
+  </Card>
+
+  <Card
+    title="Mission Control"
+    icon="desktop"
+    href="https://hub.continue.dev/agents"
+  >
+    访问 Web 界面管理代理
+  </Card>
+</CardGroup>

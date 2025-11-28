@@ -1,0 +1,406 @@
+---
+title: "@Docs（已弃用）"
+description: 已弃用的文档上下文提供程序 - 请改用新的文档感知方法
+keywords: [deprecated, documentation, docs, context, embeddings, legacy]
+noindex: true
+---
+
+<Warning>
+  **此功能已弃用。** `@Docs` 上下文提供程序已被弃用，取而代之的是更集成的文档感知方法。请参阅我们的 [使代理模式感知代码库和文档指南](/guides/codebase-documentation-awareness) 以获取推荐方法。
+</Warning>
+
+## 迁移指南
+
+如果您当前正在使用 `@Docs` 上下文提供程序，请迁移到我们的 [代码库和文档感知指南](/guides/codebase-documentation-awareness) 中概述的新方法。新方法提供：
+
+- 与 Continue 代理模式功能更好的集成
+- 更智能的上下文选择
+- 改进的性能和准确性
+
+## 遗留文档
+
+**以下是 `@Docs` 上下文提供程序的原始文档，保留供参考**
+
+`@Docs` 上下文提供程序允许您在 Continue 中直接高效地引用文档。
+
+## 如何启用 @Docs 上下文提供程序
+
+要启用 `@Docs` 上下文提供程序，请将其添加到 `config.json` 文件中的上下文提供程序列表中。
+
+<Tabs>
+  <Tab title="YAML">
+  ```yaml title="config.yaml"
+  context:
+    - provider: docs
+  ```
+  </Tab>
+  <Tab title="JSON">
+  ```json title="config.json"
+  {
+    "contextProviders": [
+      {
+        "name": "docs"
+      }
+    ]
+  }
+  ```
+  </Tab>
+</Tabs>
+
+## @Docs 上下文提供程序的工作原理
+
+`@Docs` 上下文提供程序的工作原理是
+
+1. 爬取指定的文档站点
+2. 为分块内容生成嵌入
+3. 将嵌入存储在您的本地机器上
+4. 嵌入聊天输入，将相似的文档块作为上下文包含在内
+
+## 如何索引您自己的文档
+
+**注意：** 文档配置现在应直接在您的 `config.yaml` 文件中完成。以前的 `docs` 块功能已被弃用。
+
+### 如何通过 @Docs 上下文提供程序添加文档
+
+要添加单个文档站点，我们建议使用 GUI 中的 **添加文档** 表单。您可以通过以下方式访问它
+
+- 从 `@Docs` 上下文提供程序 - 在聊天中输入 `@Docs`，按 `Enter`，然后搜索 `Add Docs`
+- 从 `More` 页面（三点图标）的 `@docs indexes` 部分
+  中的 `@Docs` 上下文提供程序。
+
+在 **添加文档** 表单中，输入站点的 `Title` 和 `Start URL`。
+
+- `Title`：文档站点的名称，用于在 UI 中标识。
+- `Start URL`：索引过程应开始的 URL。
+
+提交后将开始索引。进度可以在表单中查看，或稍后在 `More` 页面的 `@docs indexes` 部分查看。
+
+文档源可能会根据您仓库中的包文件进行建议。目前这适用于 Python `requirements.txt` 文件和 Node.js（Javascript/Typescript）`package.json` 文件。
+
+- 具有有效文档 URL（带有 `+` 图标）的包可以点击立即开始索引
+- 具有部分信息（带有笔图标）的包可以点击以使用可用信息填写表单
+- 请注意，您可以将鼠标悬停在信息图标上，查看包建议的来源。
+
+![Add documentation form](/images/docs-form.png)
+
+### 如何在配置文件中添加文档
+
+对于批量添加或编辑文档站点，我们建议直接编辑您的全局配置文件。文档站点存储在全局配置中 `docs` 内的数组中，如下所示：
+
+<Tabs>
+  <Tab title="YAML">
+  ```yaml title="config.yaml"
+  docs:
+    - title: Nest.js
+      startUrl: https://docs.nestjs.com/
+      faviconUrl: https://docs.nestjs.com/favicon.ico
+  ```
+  </Tab>
+  <Tab title="JSON">
+  ```json title="config.json"
+  {
+    "docs": [
+      {
+        "title": "Nest.js",
+        "startUrl": "https://docs.nestjs.com/",
+        "faviconUrl": "https://docs.nestjs.com/favicon.ico"
+      }
+    ]
+  }
+  ```
+  </Tab>
+</Tabs>
+
+有关所有文档站点配置选项，请参阅 [配置参考](/reference)。
+
+保存配置文件后将重新同步索引。
+
+## 如何配置 @Docs 高级设置
+
+### 如何使用您的自定义嵌入提供程序
+
+如果您已经设置了 [嵌入提供程序](../customize/model-roles/embeddings.mdx)，@docs 将使用您的嵌入提供程序。切换嵌入提供程序将触发重新索引您配置中的所有文档站点。
+
+### 如何配置重新排序以获得更好的结果
+
+与 [@Codebase 上下文提供程序配置](./deprecated-codebase#configuration) 一样，您可以使用 `nRetrieve`、`nFinal` 和 `useReranking` 调整 `@Docs` 上下文提供程序的重新排序行为。
+
+<Tabs>
+  <Tab title="YAML">
+  ```yaml title="config.yaml"
+  context:
+    - provider: docs
+      params:
+        nRetrieve: 25 # 从嵌入查询中检索的文档数量
+        nFinal: 5 # 如果重新排序，则返回的文档块数量
+        useReranking: true # 如果配置了重新排序器，则使用重新排序（默认为 true）
+  ```
+  </Tab>
+  <Tab title="JSON">
+  ```json title="config.json"
+  {
+    "contextProviders": [
+      {
+        "name": "docs",
+        "params": {
+          "nRetrieve": 25, // 从嵌入查询中检索的文档数量
+          "nFinal": 5, // 如果重新排序，则返回的文档块数量
+          "useReranking": true // 如果配置了重新排序器，则使用重新排序（默认为 true）
+        }
+      }
+    ]
+  }
+  ```
+  </Tab>
+</Tabs>
+
+### 如何为 GitHub 文档设置 GitHub Token
+
+GitHub API 将公共请求的速率限制为每小时 60 次。如果您想可靠地索引 GitHub 仓库，您可以在配置文件中添加 github token：
+
+<Tabs>
+  <Tab title="YAML">
+  ```yaml title="config.yaml"
+  context:
+    - provider: docs
+      params:
+        githubToken: <GITHUB_TOKEN>
+  ```
+  </Tab>
+  <Tab title="JSON">
+  ```json title="config.json"
+  {
+    "contextProviders": [
+      {
+        "name": "docs",
+        "params": {
+          "githubToken": "github_..."
+        }
+      }
+    ]
+  }
+  ```
+  </Tab>
+</Tabs>
+
+### 如何为私有文档启用本地爬取
+
+默认情况下，Continue 使用专门的爬取服务爬取文档站点，为大多数用户和文档站点提供最佳体验。
+
+如果您的文档是私有的，您可以通过将 `useLocalCrawling` 设置为 `true` 来跳过默认爬取器，改用本地爬取器。
+
+<Tabs>
+  <Tab title="YAML">
+  ```yaml title="config.yaml"
+  docs:
+    - title: My Private Docs
+      startUrl: http://10.2.1.2/docs
+      faviconUrl: http://10.2.1.2/docs/assets/favicon.ico,
+      useLocalCrawling: true
+  ```
+  </Tab>
+  <Tab title="JSON">
+  ```json title="config.json"
+  {
+    "docs": [
+      {
+        "title": "My Private Docs",
+        "startUrl": "http://10.2.1.2/docs",
+        "faviconUrl": "http://10.2.1.2/docs/assets/favicon.ico",
+        "useLocalCrawling": true
+      }
+    ]
+  }
+  ```
+  </Tab>
+</Tabs>
+
+<Info>
+  默认的本地爬取器是一个轻量级工具，无法渲染使用 JavaScript 动态生成的站点。如果您的站点需要渲染，您可以从用户设置页面启用实验性的 `Use Chromium for Docs Crawling` 功能。这将下载并安装 Chromium 到 `~/.continue/.utils`，并将其用作本地爬取器。**注意：** Chromium 爬取支持正在被弃用，可能会在未来版本中被移除。
+</Info>
+
+进一步说明：
+
+- 如果站点只能在本地访问，默认爬取器无论如何都会失败，并回退到本地爬取器。如果 URL 本身是机密的，`useLocalCrawling` 特别有用。
+- 对于 GitHub 仓库，这没有影响，因为只会使用 GitHub 爬取器，而且如果仓库是私有的，无论如何都只能使用特权 GitHub token 访问。
+
+## 如何管理您的文档索引
+
+您可以从 `More` 页面（三点）的 `@docs indexes` 部分查看索引状态并管理您的文档站点
+
+- Continue 不会自动重新索引您的文档。使用 `Click to re-index` 为特定源触发重新索引
+- 当站点正在索引时，点击 `Cancel indexing` 取消该过程
+- 失败的索引尝试将显示错误状态栏和图标
+- 使用垃圾桶图标从配置中删除文档站点
+
+![More Page @docs indexes section](/images/docs-indexes.png)
+
+您还可以从聊天页面底部的可隐藏进度条查看当前正在索引的文档的整体状态
+
+![Documentation indexing peek](/images/docs-indexing-peek.png)
+
+您还可以使用以下 IDE 命令强制重新索引所有文档：`Continue: Docs Force Re-Index`。
+
+## 不同设置的配置示例
+
+### 如何在 VS Code 中设置 @Docs（最小配置）
+
+以下配置示例在 VS Code 中开箱即用。这使用内置的嵌入提供程序，没有重新排序。
+
+<Tabs>
+  <Tab title="YAML">
+  ```yaml title="config.yaml"
+  context:
+    - provider: docs
+    
+  docs:
+    - title: Nest.js
+      startUrl: https://docs.nestjs.com/
+  ```
+  </Tab>
+  <Tab title="JSON">
+  ```json title="config.json"
+  {
+    "contextProviders": [
+      {
+        "name": "docs",
+      }
+    ],
+    "docs": [
+      {
+        "title": "Nest.js",
+        "startUrl": "https://docs.nestjs.com/",
+      },
+    ]
+  }
+  ```
+  </Tab>
+</Tabs>
+
+### 如何在 JetBrains IDE 中设置 @Docs（最小配置）
+
+这是 Jetbrains 的等效最小示例，需要设置 [嵌入提供程序](../customize/model-roles/embeddings.mdx)。
+
+<Tabs>
+  <Tab title="YAML">
+  ```yaml title="config.yaml"
+  models:
+    - name: LMStudio embedder
+      provider: lmstudio
+      model: nomic-ai/nomic-embed-text-v1.5-GGUF
+      roles:
+        - embed
+  context:
+    - provider: docs
+  docs:
+    - title: Nest.js
+      startUrl: https://docs.nestjs.com/
+  ```
+  </Tab>
+  <Tab title="JSON">
+  ```json title="config.json"
+  {
+    "contextProviders": [
+      {
+        "name": "docs",
+      }
+    ],
+    "docs": [
+      {
+        "title": "Nest.js",
+        "startUrl": "https://docs.nestjs.com/",
+      },
+    ],
+    "embeddingsProvider": {
+      "provider": "lmstudio",
+      "model": "nomic-ai/nomic-embed-text-v1.5-GGUF"
+    }
+  }
+  ```
+  </Tab>
+</Tabs>
+
+### 如何使用高级功能设置 @Docs（VS Code 或 JetBrains）
+
+以下配置示例包括：
+
+- 公共和私有文档源的示例
+- 自定义嵌入提供程序
+- 可用的重新排序模型，重新排序参数已自定义
+- 用于启用 GitHub 爬取的 GitHub token
+
+<Tabs>
+  <Tab title="YAML">
+  ```yaml title="config.yaml"
+  models:
+    - name: LMStudio Nomic Text
+      provider: lmstudio
+      model: nomic-ai/nomic-embed-text-v1.5-GGUF
+      roles:
+        - embed
+    - name: Voyage Rerank-2
+      provider: voyage
+      apiKey: <VOYAGE_API_KEY>
+      model: rerank-2
+      roles:
+        - rerank
+  context:
+    - provider: docs
+      params:
+         githubToken: <GITHUB_TOKEN>
+         nRetrieve: 25
+         nFinal: 5
+         useReranking: true
+  docs:
+    - title: Nest.js
+      startUrl: https://docs.nestjs.com/
+    - title: My Private Docs
+      startUrl: http://10.2.1.2/docs
+      faviconUrl: http://10.2.1.2/docs/assets/favicon.ico
+      useLocalCrawling: true
+  ```
+  </Tab>
+  <Tab title="JSON">
+  ```json title="config.json"
+  {
+    "contextProviders": [
+      {
+        "name": "docs",
+        "params": {
+          "githubToken": "github_...",
+          "nRetrieve": 25,
+          "nFinal": 5,
+          "useReranking": true
+        }
+      }
+    ],
+    "docs": [
+      {
+        "title": "Nest.js",
+        "startUrl": "https://docs.nestjs.com/"
+      },
+      {
+        "title": "My Private Docs",
+        "startUrl": "http://10.2.1.2/docs",
+        "faviconUrl": "http://10.2.1.2/docs/assets/favicon.ico",
+        "maxDepth": 4,
+        "useLocalCrawling": true
+      }
+    ],
+    "reranker": {
+      "name": "voyage",
+      "params": {
+        "model": "rerank-2",
+        "apiKey": "<YOUR_VOYAGE_API_KEY>"
+      }
+    },
+    "embeddingsProvider": {
+      "provider": "lmstudio",
+      "model": "nomic-ai/nomic-embed-text-v1.5-GGUF"
+    }
+  }
+  ```
+  </Tab>
+</Tabs>
+
+此设置还可能涉及通过用户设置页面（齿轮图标）启用 Chromium 作为本地文档的备份。

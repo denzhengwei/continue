@@ -1,0 +1,448 @@
+---
+title: "上下文提供程序（已弃用）"
+description: "这些上下文提供程序已被弃用，不再积极维护。它们仅在此处保留用于参考目的。"
+noindex: true
+---
+
+<Warning>
+本页面记录的上下文提供程序已被弃用，不再积极维护。我们建议使用替代解决方案或模型上下文协议（MCP）来实现类似功能。这些提供程序可能会在未来版本中被移除。
+</Warning>
+
+## 已弃用的提供程序
+
+以下上下文提供程序已被弃用，但仍保留在此处供参考。如果您当前正在使用这些提供程序中的任何一个，请考虑迁移到替代解决方案。
+
+### `@Greptile`
+
+查询当前仓库/分支的 [Greptile](https://www.greptile.com/) 索引。
+
+<Tabs>
+  <Tab title="YAML">
+    ```yaml config.yaml
+    context:
+      - provider: greptile
+        params:
+          greptileToken: "..."
+          githubToken: "..."
+    ```
+  </Tab>
+  <Tab title="JSON">
+    ```json config.json
+    {
+      "contextProviders": [
+        {
+          "name": "greptile",
+          "params": { "GreptileToken": "...", "GithubToken": "..." }
+        }
+      ]
+    }
+```
+  </Tab>
+</Tabs>
+
+### `@Commits`
+
+引用特定的 git 提交元数据和差异，或所有最近的提交。
+
+<Tabs>
+  <Tab title="YAML">
+    ```yaml config.yaml
+    context:
+      - provider: commit
+        params:
+          Depth: 50
+          LastXCommitsDepth: 10
+    ```
+  </Tab>
+  <Tab title="JSON">
+    ```json config.json
+    {
+      "contextProviders": [
+        { "name": "commit", "params": { "Depth": 50, "LastXCommitsDepth": 10 } }
+      ]
+    }
+    ```
+  </Tab>
+</Tabs>
+
+Depth 是将加载到子菜单中的提交数量，默认为 50。LastXCommitsDepth 是将包含的最近提交数量，默认为 10。
+
+### `@Discord`
+
+引用 Discord 频道中的消息。
+
+<Tabs>
+  <Tab title="YAML">
+    ```yaml config.yaml
+    context:
+      - provider: discord
+        params:
+          discordKey: "bot token"
+          guildId: "1234567890"
+          channels:
+            - id: "123456"
+              name: "example-channel"
+            - id: "678901"
+              name: "example-channel-2"
+    ```
+  </Tab>
+  <Tab title="JSON">
+    ```json config.json
+    {
+      "contextProviders": [
+        {
+          "name": "discord",
+          "params": {
+            "discordKey": "bot token",
+            "guildId": "1234567890",
+            "channels": [
+              { "id": "123456", "name": "example-channel" },
+              { "id": "678901", "name": "example-channel-2" }
+            ]
+          }
+        }
+      ]
+    }
+```
+  </Tab>
+</Tabs>
+
+请确保包含您自己的 [Bot Token](https://discord.com/developers/applications)，并将其加入到您的相关服务器中。如果您想更精细地控制要搜索的频道，可以指定要搜索的频道 ID 列表。如果您不想指定任何频道，只需包含服务器 ID（guild id），所有频道都将被包含在内。该提供程序仅读取文本频道。
+
+### `@Jira`
+
+引用 Jira 问题中的对话。
+
+<Tabs>
+  <Tab title="YAML">
+    ```yaml config.yaml
+    context:
+      - provider: jira
+        params:
+          domain: company.atlassian.net
+          token: ATATT...
+    ```
+  </Tab>
+  <Tab title="JSON">
+    ```json config.json
+    {
+      "contextProviders": [
+        {
+          "name": "jira",
+          "params": { "domain": "company.atlassian.net", "token": "ATATT..." }
+        }
+      ]
+    }
+```
+  </Tab>
+</Tabs>
+
+请确保包含您自己的 [Atlassian API Token](https://id.atlassian.com/manage-profile/security/api-tokens)，或使用您的 `email` 和 `token`，其中 token 设置为您的密码以进行基本身份验证。如果您使用自己的 Atlassian API Token，请不要配置您的电子邮件。
+
+#### Jira 数据中心支持
+
+此上下文提供程序同时支持 Jira API 版本 2 和 3。默认情况下，它将使用版本 3，因为这是云版本使用的版本，但如果您有 Jira 的数据中心版本，您需要使用 `apiVersion` 属性将 API 版本设置为 2。
+
+<Tabs>
+  <Tab title="YAML">
+    ```yaml config.yaml
+    context:
+      - provider: jira
+        params:
+          apiVersion: "2"
+    ```
+  </Tab>
+  <Tab title="JSON">
+    ```json config.json
+    { "contextProviders": [{ "name": "jira", "params": { "apiVersion": "2" } }] }
+    ```
+  </Tab>
+</Tabs>
+
+#### 问题查询
+
+默认情况下，将使用以下查询来查找问题：
+
+```
+assignee = currentUser() AND resolution = Unresolved order by updated DESC
+```
+
+您可以通过设置 `issueQuery` 参数来覆盖此查询。
+
+#### 最大结果数
+
+您可以设置 `maxResults` 参数来限制返回的结果数量。默认值为 `50`。
+
+### `@Gitlab Merge Request`
+
+引用 GitLab 上此分支的开放 MR。
+
+<Tabs>
+  <Tab title="YAML">
+    ```yaml config.yaml
+    context:
+      - provider: gitlab-mr
+        params:
+          token: "..."
+    ```
+  </Tab>
+  <Tab title="JSON">
+    ```json config.json
+    { "contextProviders": [{ "name": "gitlab-mr", "params": { "token": "..." } }] }
+    ```
+  </Tab>
+</Tabs>
+
+您需要创建一个具有 `read_api` 范围的 [个人访问令牌](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html)。
+
+#### 使用自托管 GitLab
+
+您可以通过在配置中设置 `domain` 参数来指定要通信的域。默认情况下，这设置为 `gitlab.com`。
+
+<Tabs>
+  <Tab title="YAML">
+    ```yaml config.yaml
+    context:
+      - provider: gitlab-mr
+        params:
+          token: "..."
+          domain: "gitlab.example.com"
+    ```
+  </Tab>
+  <Tab title="JSON">
+    ```json config.json
+    {
+      "contextProviders": [
+        {
+          "name": "gitlab-mr",
+          "params": { "token": "...", "domain": "gitlab.example.com" }
+        }
+      ]
+    }
+```
+  </Tab>
+</Tabs>
+
+#### 过滤评论
+
+如果您选择要编辑的代码，您可以让上下文提供程序过滤掉其他文件的评论。要启用此功能，请将 `filterComments` 设置为 `true`。
+
+### `@Google`
+
+引用 Google 搜索的结果。
+
+<Tabs>
+  <Tab title="YAML">
+    ```yaml config.yaml
+    context:
+      - provider: google
+        params:
+          serperApiKey: <YOUR_SERPER.DEV_API_KEY>
+    ```
+  </Tab>
+  <Tab title="JSON">
+    ```json config.json
+    {
+      "contextProviders": [
+        {
+          "name": "google",
+          "params": { "serperApiKey": "<YOUR_SERPER.DEV_API_KEY>" }
+        }
+      ]
+    }
+```
+  </Tab>
+</Tabs>
+
+例如，如果您想搜索和讨论学习 Python 的方法，请键入 "@Google python tutorial"。
+
+注意：您可以在 [serper.dev](https://serper.dev) 免费获取 API 密钥。
+
+### @Database 上下文提供程序 – 引用数据库表模式
+
+引用来自 Sqlite、Postgres、MSSQL 和 MySQL 数据库的表模式。
+
+<Tabs>
+  <Tab title="YAML">
+    ```yaml config.yaml
+    context:
+      - provider: database
+        params:
+          connections:
+            - name: examplePostgres
+              connection_type: postgres
+              connection:
+                user: username
+                host: localhost
+                database: exampleDB
+                password: yourPassword
+                port: 5432
+            - name: exampleMssql
+              connection_type: mssql
+              connection:
+                user: username
+                server: localhost
+                database: exampleDB
+                password: yourPassword
+            - name: exampleSqlite
+              connection_type: sqlite
+              connection:
+                filename: /path/to/your/sqlite/database.db
+    ```
+  </Tab>
+  <Tab title="JSON">
+    ```json config.json
+    {
+      "contextProviders": [
+        {
+          "name": "database",
+          "params": {
+            "connections": [
+              {
+                "name": "examplePostgres",
+                "connection_type": "postgres",
+                "connection": {
+                  "user": "username",
+                  "host": "localhost",
+                  "database": "exampleDB",
+                  "password": "yourPassword",
+                  "port": 5432
+                }
+              },
+              {
+                "name": "exampleMssql",
+                "connection_type": "mssql",
+                "connection": {
+                  "user": "username",
+                  "server": "localhost",
+                  "database": "exampleDB",
+                  "password": "yourPassword"
+                }
+              },
+              {
+                "name": "exampleSqlite",
+                "connection_type": "sqlite",
+                "connection": { "filename": "/path/to/your/sqlite/database.db" }
+              }
+            ]
+          }
+      }
+      ]
+    }
+```
+  </Tab>
+</Tabs>
+
+每个连接应包括唯一名称、`connection_type` 以及特定于每种数据库类型的必要连接参数。
+
+可用的连接类型：
+
+- `postgres`
+- `mysql`
+- `sqlite`
+
+### `@Issue`
+
+引用 GitHub 问题中的对话。
+
+<Tabs>
+  <Tab title="YAML">
+    ```yaml config.yaml
+    context:
+      - provider: issue
+        params:
+          repos:
+            - owner: continuedev
+              repo: continue
+          githubToken: ghp_xxx
+    ```
+  </Tab>
+  <Tab title="JSON">
+    ```json config.json
+    {
+      "contextProviders": [
+        {
+          "name": "issue",
+          "params": {
+            "repos": [{ "owner": "continuedev", "repo": "continue" }],
+            "githubToken": "ghp_xxx"
+          }
+        }
+      ]
+    }
+```
+  </Tab>
+</Tabs>
+
+请确保包含您自己的 [GitHub 个人访问令牌](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token)，以避免被速率限制。
+
+### `@Url`
+
+引用给定 URL 的 markdown 转换内容。
+
+<Tabs>
+  <Tab title="YAML">
+    ```yaml config.yaml
+    context:
+      - provider: url
+    ```
+  </Tab>
+  <Tab title="JSON">
+    ```json config.json
+    { "contextProviders": [{ "name": "url" }] }
+    ```
+  </Tab>
+</Tabs>
+
+### `@Search`
+
+引用代码库搜索的结果，就像您从 VS Code 搜索中获得的结果一样。
+
+<Tabs>
+  <Tab title="YAML">
+    ```yaml config.yaml
+    context:
+      - provider: search
+        params:
+          maxResults: 100 # optional, defaults to 200
+    ```
+  </Tab>
+  <Tab title="JSON">
+    ```json config.json
+    {
+      "contextProviders": [
+        {
+          "name": "search",
+          "params": {
+            "maxResults": 100 // optional, defaults to 200
+          }
+        }
+      ]
+    }
+    ```
+  </Tab>
+</Tabs>
+
+此上下文提供程序由 [ripgrep](https://github.com/BurntSushi/ripgrep) 提供支持。
+
+### `@Web`
+
+引用来自网络的相关页面，根据您的输入自动确定。
+
+可选地，设置 `n` 以限制返回的结果数量（默认值为 6）。
+
+<Tabs>
+  <Tab title="YAML">
+    ```yaml config.yaml
+    context:
+      - provider: web
+        params:
+          n: 5
+    ```
+  </Tab>
+  <Tab title="JSON">
+    ```json config.json
+    { "contextProviders": [{ "name": "web", "params": { "n": 5 } }] }
+    ```
+  </Tab>
+</Tabs>

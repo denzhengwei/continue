@@ -1,0 +1,89 @@
+---
+title: "如何配置 Continue"
+description: 了解如何通过 Hub 或本地 YAML 文件访问和管理 Continue 配置
+keywords: [config, settings, customize]
+sidebarTitle: "配置"
+---
+
+您可以从 Continue 聊天侧边栏轻松访问您的配置。通过按 <kbd>cmd/ctrl</kbd> + <kbd>L</kbd>（VS Code）或 <kbd>cmd/ctrl</kbd> + <kbd>J</kbd>（JetBrains）打开侧边栏，然后点击主聊天输入上方的代理选择器。然后，您可以将鼠标悬停在代理上，点击 `new window`（中心代理）或 `gear`（本地代理）图标。
+
+![configure](/images/configure-continue.png)
+
+## 如何管理中心配置
+
+中心配置可以在 [中心](https://hub.continue.dev) 中管理。请参阅 [编辑配置](/hub/configs/edit-a-config)
+
+## 如何使用 YAML 配置本地配置
+
+本地用户级配置存储在您的主目录中的 `config.yaml` 文件中，可以在其中编辑：
+
+- `~/.continue/config.yaml`（MacOS / Linux）
+- `%USERPROFILE%\.continue\config.yaml`（Windows）
+
+要打开此 `config.yaml`，您需要打开聊天输入右上角的配置下拉菜单。在该下拉菜单中，在 "本地配置" 选项旁边，选择齿轮图标。它将打开本地 `config.yaml`。
+
+![local-config-open-steps](/images/local-config-open-steps.png)
+
+编辑此文件时，您可以在键入时看到可用选项的建议，或查看下面的参考。当您从 IDE 保存配置文件时，Continue 将自动刷新以考虑您的更改。配置文件在您首次使用 Continue 时自动创建，如果不存在，始终会使用默认值自动生成。
+
+有关 `config.yaml` 的完整参考，请参阅 [此处](/reference)。
+
+## 遗留配置方法（已弃用）
+
+<Info>在此处查看 `config.json` 迁移指南 [此处](/reference/yaml-migration)</Info>
+
+- [`config.json`](/reference) - 原始配置格式，存储在与 `config.yaml` 相同位置的文件中
+- [`.continuerc.json`](#如何使用-continuercjson-进行工作区配置) - 工作区级配置
+- [`config.ts`](#如何使用-configts-进行高级配置) - 高级配置（可能不必要）- 您主目录中的 TypeScript 文件，可用于以编程方式修改（_合并_）`config.json` 架构：
+  - `~/.continue/config.ts`（MacOS / Linux）
+  - `%USERPROFILE%\.continue\config.ts`（Windows）
+
+### 如何使用 `.continuerc.json` 进行工作区配置
+
+`.continuerc.json` 的格式与 `config.json` 相同，另外还有一个 `mergeBehavior` 属性，可以设置为 "merge"（合并）或 "overwrite"（覆盖）。如果设置为 "merge"（默认值），`.continuerc.json` 将应用于 `config.json` 之上（数组和对象会合并）。如果设置为 "overwrite"，则 `.continuerc.json` 的每个顶级属性都会覆盖 `config.json` 中的该属性。
+
+示例
+
+```json title=".continuerc.json"
+{
+  "tabAutocompleteOptions": {
+    "disable": true
+  },
+  "mergeBehavior": "overwrite"
+}
+```
+
+### 如何使用 `config.ts` 进行高级配置
+
+`config.yaml` 或 `config.json` 可以处理绝大多数必要的配置，因此我们建议尽可能使用它。但是，如果您需要以编程方式扩展 Continue 配置，您可以使用 `config.ts` 文件，放置在 `~/.continue/config.ts`（MacOS / Linux）或 `%USERPROFILE%\.continue\config.ts`（Windows）。
+
+`config.ts` 必须导出一个 `modifyConfig` 函数，如下所示：
+
+<Warning>
+  下面显示的 `slashCommands` 数组已弃用。对于创建自定义斜杠命令，请改用
+  [提示文件](./prompts)。
+</Warning>
+
+```ts title="config.ts"
+export function modifyConfig(config: Config): Config {
+  config.slashCommands?.push({
+    name: "commit",
+    description: "Write a commit message",
+    run: async function* (sdk) {
+      // getDiff 函数接受一个布尔参数，指示是否
+      // 在差异中包含未暂存的更改。
+      const diff = await sdk.ide.getDiff(false); // 传递 false 以排除未暂存的更改
+      for await (const message of sdk.llm.streamComplete(
+        `${diff}\n\n为上述更改编写提交消息。使用不超过 20 个令牌，以命令式语气给出简短描述（例如 'Add feature' 而不是 'Added feature'）：`,
+        new AbortController().signal,
+        {
+          maxTokens: 20,
+        },
+      )) {
+        yield message;
+      }
+    },
+  });
+  return config;
+}
+```
